@@ -28,33 +28,68 @@
         <p class="game-hint" id="gameHint">Choose carefully...</p>
 
         <div class="game-stage" id="gameStage">
+<!-- STAGE 1: BOMB -->
+<div class="stage-screen active" id="bombStage">
+  <div class="bomb-timer" id="bombTimer">30</div>
 
-          <!-- STAGE 1: BOMB -->
-          <div class="stage-screen active" id="bombStage">
-            <div class="bomb-timer" id="bombTimer">30</div>
+  <div class="bomb-rig">
+    <div class="bomb-device" id="bombDevice">
+      <div class="bomb-top-panel"></div>
 
-            <div class="bomb-shell" id="bombShell">
-              <div class="bomb-cap"></div>
-              <div class="bomb-spark"></div>
-            </div>
+      <div class="bomb-core-wrap">
+        <div class="bomb-core">
+          <div class="bomb-center-light"></div>
+          <div class="bomb-rivet r1"></div>
+          <div class="bomb-rivet r2"></div>
+          <div class="bomb-rivet r3"></div>
+          <div class="bomb-rivet r4"></div>
+        </div>
+      </div>
 
-            <div class="wire-board">
-              <div class="wire-row">
-                <button class="wire-btn red-wire" data-wire="red">Red Wire</button>
-              </div>
-              <div class="wire-row">
-                <button class="wire-btn green-wire" data-wire="green">Green Wire</button>
-              </div>
-              <div class="wire-row">
-                <button class="wire-btn blue-wire" data-wire="blue">Blue Wire</button>
-              </div>
-              <div class="wire-row">
-                <button class="wire-btn yellow-wire" data-wire="yellow">Yellow Wire</button>
-              </div>
-            </div>
+      <div class="wire-chamber curved-wires">
+        <div class="wire-line red-wire" data-wire="red">
+          <span class="wire-anchor left-anchor"></span>
+          <span class="wire-anchor right-anchor"></span>
+          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+            <path class="wire-curve"
+              d="M18,12 C75,56 128,56 160,30 C192,5 246,5 302,44" />
+          </svg>
+        </div>
 
-            <div class="explosion-flash" id="explosionFlash"></div>
-          </div>
+        <div class="wire-line green-wire" data-wire="green">
+          <span class="wire-anchor left-anchor"></span>
+          <span class="wire-anchor right-anchor"></span>
+          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+            <path class="wire-curve"
+              d="M18,17 C70,0 115,0 160,30 C205,59 250,59 302,18" />
+          </svg>
+        </div>
+
+        <div class="wire-line blue-wire" data-wire="blue">
+          <span class="wire-anchor left-anchor"></span>
+          <span class="wire-anchor right-anchor"></span>
+          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+            <path class="wire-curve"
+              d="M18,40 C80,10 130,10 160,30 C190,50 240,50 302,14" />
+          </svg>
+        </div>
+
+        <div class="wire-line yellow-wire" data-wire="yellow">
+          <span class="wire-anchor left-anchor"></span>
+          <span class="wire-anchor right-anchor"></span>
+          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+            <path class="wire-curve"
+              d="M18,24 C90,58 126,58 160,30 C194,2 230,2 302,34" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="slice-guide">Swipe across a wire to cut it</div>
+    </div>
+  </div>
+
+  <div class="explosion-flash" id="explosionFlash"></div>
+</div>
 
           <!-- STAGE 2A: GREEN RUNNER -->
           <div class="stage-screen" id="greenStage">
@@ -64,15 +99,12 @@
             </div>
           </div>
 
-          <!-- STAGE 2B: BLUE TIMELINE -->
+          <!-- STAGE 2B: BLUE CLOCK -->
           <div class="stage-screen" id="blueStage">
-            <div class="timeline-title">Drag the line to tomorrow</div>
-            <div class="timeline-track" id="timelineTrack">
-              <div class="timeline-glow"></div>
-              <div class="timeline-fill" id="timelineFill"></div>
-              <div class="timeline-marker today-marker">Today</div>
-              <div class="timeline-marker tomorrow-marker">Tomorrow</div>
-              <div class="timeline-handle" id="timelineHandle"></div>
+            <div class="clock-title">Swipe forward into tomorrow</div>
+            <div class="digital-clock-panel" id="digitalClockPanel">
+              <div class="digital-clock-readout" id="digitalClockReadout">23:45</div>
+              <div class="clock-subtext">Swipe up until it becomes 00:01</div>
             </div>
           </div>
 
@@ -80,14 +112,8 @@
           <div class="stage-screen" id="yellowStage">
             <div class="maze-title">Guide the orb to the end</div>
 
-            <div class="maze-wrapper">
-              <svg class="maze-svg" viewBox="0 0 320 420" preserveAspectRatio="none">
-                <path class="maze-wall"
-                  d="M20 20 H300 V90 H180 V140 H280 V210 H120 V260 H220 V330 H70 V400 H300" />
-                <path class="maze-wall"
-                  d="M20 70 H130 V120 H40 V190 H210 V240 H70 V300 H170 V350 H20" />
-              </svg>
-
+            <div class="maze-grid-wrapper" id="mazeWrapper">
+              <div class="maze-grid" id="mazeGrid"></div>
               <div class="maze-start">START</div>
               <div class="maze-end" id="mazeEnd">END</div>
               <div class="yellow-orb" id="yellowOrb"></div>
@@ -157,9 +183,7 @@
       <h1 class="big-contact">Contact Details</h1>
       <p>Contact Nikita(Me) for more information.</p>
       <p>If you don't want to contact me, contact my mother,Koshnee, for more information.</p>
-
       <br>
-
       <p><strong>Phone number:</strong> 0813270172</p>
       <p><strong>Koshnee's Number:</strong> 0832269234</p>
     </div>
