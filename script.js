@@ -10,18 +10,19 @@ const blueStage = document.getElementById("blueStage");
 const yellowStage = document.getElementById("yellowStage");
 
 const bombTimer = document.getElementById("bombTimer");
-const bombShell = document.getElementById("bombShell");
+const bombDevice = document.getElementById("bombDevice");
 const explosionFlash = document.getElementById("explosionFlash");
-const wireButtons = document.querySelectorAll(".wire-btn");
+const wireLines = document.querySelectorAll(".wire-line");
 
 const greenRunner = document.getElementById("greenRunner");
 const runnerArea = document.getElementById("runnerArea");
 
-const timelineTrack = document.getElementById("timelineTrack");
-const timelineHandle = document.getElementById("timelineHandle");
-const timelineFill = document.getElementById("timelineFill");
+const digitalClockPanel = document.getElementById("digitalClockPanel");
+const digitalClockReadout = document.getElementById("digitalClockReadout");
 
 const yellowOrb = document.getElementById("yellowOrb");
+const mazeWrapper = document.getElementById("mazeWrapper");
+const mazeGrid = document.getElementById("mazeGrid");
 const mazeEnd = document.getElementById("mazeEnd");
 
 const colorSmokeOverlay = document.getElementById("colorSmokeOverlay");
@@ -35,14 +36,38 @@ let runnerX = -60;
 let runnerDirection = 1;
 let runnerCaught = false;
 
-let timelineDragging = false;
-let timelineDone = false;
-let timelineProgress = 0;
+let clockMinutes = 23 * 60 + 45;
+let clockDone = false;
+let clockSwipeStartY = 0;
+let clockSwipeAccumulator = 0;
 
 let orbDragging = false;
 let orbDone = false;
 let orbPointerOffsetX = 0;
 let orbPointerOffsetY = 0;
+
+const MAZE_COLS = 16;
+const MAZE_ROWS = 12;
+const CELL_SIZE = 22;
+
+/* 1 = wall, 0 = open */
+const mazeMap = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1],
+  [1,0,1,1,1,0,1,1,0,1,0,1,0,1,0,1],
+  [1,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1],
+  [1,1,1,0,1,1,1,0,1,1,0,1,1,1,0,1],
+  [1,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1],
+  [1,0,1,1,1,0,1,0,1,1,1,1,0,1,1,1],
+  [1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1],
+  [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1],
+  [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1],
+  [1,0,1,1,1,1,1,1,1,0,1,1,1,1,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+const mazeStartCell = { col: 1, row: 9 };
+const mazeEndCell = { col: 14, row: 10 };
 
 startBtn?.addEventListener("click", () => {
   showOnlyPage(1);
@@ -66,6 +91,7 @@ function initGame() {
   resetBombStage();
   resetGreenStage();
   resetBlueStage();
+  renderMaze();
   resetYellowStage();
 
   showStage("bomb");
@@ -75,7 +101,7 @@ function initGame() {
 }
 
 function showStage(stageName) {
-  [bombStage, greenStage, blueStage, yellowStage].forEach(stage => {
+  [bombStage, greenStage, blueStage, yellowStage].forEach((stage) => {
     stage.classList.remove("active");
   });
 
@@ -89,17 +115,16 @@ function showStage(stageName) {
 function resetBombStage() {
   bombCountdown = 30;
   if (bombTimer) bombTimer.textContent = bombCountdown;
-  bombShell?.classList.remove("explode");
+
+  bombDevice?.classList.remove("explode");
   explosionFlash?.classList.remove("active");
 
-  wireButtons.forEach(btn => {
-    btn.disabled = false;
+  wireLines.forEach((wire) => {
+    wire.classList.remove("cut");
+    wire.style.pointerEvents = "auto";
   });
 
-  wireButtons.forEach(btn => {
-    btn.onclick = () => handleWireChoice(btn.dataset.wire);
-  });
-
+  setupWireSlicing();
   startBombCountdown();
 }
 
@@ -125,16 +150,65 @@ function stopBombCountdown() {
   }
 }
 
-function handleWireChoice(color) {
+function setupWireSlicing() {
+  wireLines.forEach((wire) => {
+    let startX = 0;
+    let startY = 0;
+    let slicing = false;
+
+    const startSlice = (clientX, clientY) => {
+      if (missionLocked) return;
+      slicing = true;
+      startX = clientX;
+      startY = clientY;
+    };
+
+    const moveSlice = (clientX, clientY) => {
+      if (!slicing || missionLocked) return;
+
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+
+      if (Math.abs(dx) > 70 && Math.abs(dy) < 45) {
+        slicing = false;
+        cutWire(wire.dataset.wire, wire);
+      }
+    };
+
+    const endSlice = () => {
+      slicing = false;
+    };
+
+    wire.onmousedown = (e) => startSlice(e.clientX, e.clientY);
+    wire.ontouchstart = (e) => {
+      if (!e.touches[0]) return;
+      startSlice(e.touches[0].clientX, e.touches[0].clientY);
+    };
+
+    wire.onmousemove = (e) => moveSlice(e.clientX, e.clientY);
+    wire.ontouchmove = (e) => {
+      if (!e.touches[0]) return;
+      moveSlice(e.touches[0].clientX, e.touches[0].clientY);
+    };
+
+    wire.onmouseup = endSlice;
+    wire.onmouseleave = endSlice;
+    wire.ontouchend = endSlice;
+  });
+}
+
+function cutWire(color, wireEl) {
   if (missionLocked) return;
+
   stopBombCountdown();
+
+  wireEl.classList.add("cut");
+  wireLines.forEach((w) => (w.style.pointerEvents = "none"));
 
   if (color === "red") {
     explodeBombAndRetry("Wrong wire...");
     return;
   }
-
-  wireButtons.forEach(btn => btn.disabled = true);
 
   if (color === "green") {
     gameHint.textContent = "Catch the figure";
@@ -146,8 +220,8 @@ function handleWireChoice(color) {
   }
 
   if (color === "blue") {
-    gameHint.textContent = "Drag the line to tomorrow";
-    gameStatus.textContent = "Move the future into place...";
+    gameHint.textContent = "Swipe the clock into tomorrow";
+    gameStatus.textContent = "Push time forward...";
     setTimeout(() => {
       showStage("blue");
       initBlueStage();
@@ -166,7 +240,7 @@ function handleWireChoice(color) {
 
 function explodeBombAndRetry(message) {
   missionLocked = true;
-  bombShell?.classList.add("explode");
+  bombDevice?.classList.add("explode");
   explosionFlash?.classList.add("active");
   gameStatus.textContent = message;
   gameHint.textContent = "Try again";
@@ -182,10 +256,13 @@ function resetGreenStage() {
   runnerCaught = false;
   runnerX = -60;
   runnerDirection = 1;
+
   if (greenRunner) {
     greenRunner.style.left = "-60px";
     greenRunner.style.top = "55%";
+    greenRunner.classList.remove("caught");
   }
+
   greenRunner.onclick = catchGreenRunner;
   greenRunner.ontouchstart = catchGreenRunner;
 }
@@ -194,19 +271,17 @@ function initGreenStage() {
   cancelRunnerAnimation();
 
   let phase = 0;
+
   function animateRunner() {
     if (runnerCaught) return;
 
     const areaRect = runnerArea.getBoundingClientRect();
-    const maxX = areaRect.width - 70;
+    const maxX = Math.max(20, areaRect.width - 70);
 
     runnerX += 5 * runnerDirection;
-    if (runnerX >= maxX) {
-      runnerDirection = -1;
-    }
-    if (runnerX <= 0) {
-      runnerDirection = 1;
-    }
+
+    if (runnerX >= maxX) runnerDirection = -1;
+    if (runnerX <= 0) runnerDirection = 1;
 
     phase += 0.12;
     const y = 55 + Math.sin(phase) * 18;
@@ -238,143 +313,191 @@ function catchGreenRunner(e) {
   revealInviteWithSmoke("green");
 }
 
-/* ---------------- BLUE STAGE ---------------- */
+/* ---------------- BLUE CLOCK STAGE ---------------- */
 function resetBlueStage() {
-  timelineDragging = false;
-  timelineDone = false;
-  timelineProgress = 0;
-  updateTimelineUI();
+  clockMinutes = 23 * 60 + 45;
+  clockDone = false;
+  clockSwipeAccumulator = 0;
+  updateClockReadout();
 
-  if (timelineHandle) {
-    timelineHandle.onmousedown = startTimelineDrag;
-    timelineHandle.ontouchstart = (e) => startTimelineDrag(e.touches[0]);
-  }
+  let active = false;
 
-  document.onmousemove = moveTimelineDrag;
-  document.onmouseup = endTimelineDrag;
-  document.ontouchmove = (e) => {
-    if (!timelineDragging || !e.touches[0]) return;
-    moveTimelineDrag(e.touches[0]);
+  const start = (clientY) => {
+    if (clockDone) return;
+    active = true;
+    clockSwipeStartY = clientY;
   };
-  document.ontouchend = endTimelineDrag;
+
+  const move = (clientY) => {
+    if (!active || clockDone) return;
+
+    const deltaY = clockSwipeStartY - clientY;
+    if (Math.abs(deltaY) >= 18) {
+      const minuteSteps = Math.floor(Math.abs(deltaY) / 18);
+      if (minuteSteps > 0) {
+        clockMinutes += minuteSteps;
+        if (clockMinutes > 24 * 60 + 1) clockMinutes = 24 * 60 + 1;
+        updateClockReadout();
+        clockSwipeStartY = clientY;
+      }
+    }
+
+    if (clockMinutes >= 24 * 60 + 1) {
+      active = false;
+      clockDone = true;
+      gameStatus.textContent = "Tomorrow reached.";
+      digitalClockPanel.classList.add("done");
+      revealInviteWithSmoke("blue");
+    }
+  };
+
+  const end = () => {
+    active = false;
+  };
+
+  digitalClockPanel.onmousedown = (e) => start(e.clientY);
+  digitalClockPanel.ontouchstart = (e) => {
+    if (!e.touches[0]) return;
+    start(e.touches[0].clientY);
+  };
+
+  digitalClockPanel.onmousemove = (e) => move(e.clientY);
+  digitalClockPanel.ontouchmove = (e) => {
+    if (!e.touches[0]) return;
+    move(e.touches[0].clientY);
+  };
+
+  digitalClockPanel.onmouseup = end;
+  digitalClockPanel.onmouseleave = end;
+  digitalClockPanel.ontouchend = end;
 }
 
 function initBlueStage() {
-  gameStatus.textContent = "Move the line forward...";
+  gameStatus.textContent = "Swipe upward to push time forward...";
 }
 
-function startTimelineDrag(e) {
-  if (timelineDone) return;
-  timelineDragging = true;
-  if (e.preventDefault) e.preventDefault();
+function updateClockReadout() {
+  const normalized = clockMinutes % (24 * 60);
+  const hours = Math.floor(normalized / 60);
+  const mins = normalized % 60;
+
+  const hh = String(hours).padStart(2, "0");
+  const mm = String(mins).padStart(2, "0");
+
+  digitalClockReadout.textContent = `${hh}:${mm}`;
 }
 
-function moveTimelineDrag(e) {
-  if (!timelineDragging || timelineDone) return;
+/* ---------------- YELLOW MAZE STAGE ---------------- */
+function renderMaze() {
+  if (!mazeGrid) return;
 
-  const rect = timelineTrack.getBoundingClientRect();
-  let x = e.clientX - rect.left;
-  x = Math.max(0, Math.min(rect.width, x));
+  mazeGrid.innerHTML = "";
+  mazeGrid.style.gridTemplateColumns = `repeat(${MAZE_COLS}, ${CELL_SIZE}px)`;
+  mazeGrid.style.gridTemplateRows = `repeat(${MAZE_ROWS}, ${CELL_SIZE}px)`;
 
-  timelineProgress = x / rect.width;
-  updateTimelineUI();
-
-  if (timelineProgress >= 0.93) {
-    timelineDone = true;
-    timelineDragging = false;
-    timelineProgress = 1;
-    updateTimelineUI();
-    gameStatus.textContent = "Tomorrow aligned.";
-    revealInviteWithSmoke("blue");
+  for (let row = 0; row < MAZE_ROWS; row++) {
+    for (let col = 0; col < MAZE_COLS; col++) {
+      const cell = document.createElement("div");
+      cell.className = mazeMap[row][col] === 1 ? "maze-cell wall" : "maze-cell open";
+      mazeGrid.appendChild(cell);
+    }
   }
+
+  mazeWrapper.style.width = `${MAZE_COLS * CELL_SIZE}px`;
+  mazeWrapper.style.height = `${MAZE_ROWS * CELL_SIZE}px`;
+
+  mazeEnd.style.left = `${mazeEndCell.col * CELL_SIZE + 2}px`;
+  mazeEnd.style.top = `${mazeEndCell.row * CELL_SIZE + 2}px`;
 }
 
-function endTimelineDrag() {
-  timelineDragging = false;
-}
-
-function updateTimelineUI() {
-  if (timelineFill) {
-    timelineFill.style.width = `${timelineProgress * 100}%`;
-  }
-  if (timelineHandle) {
-    timelineHandle.style.left = `${timelineProgress * 100}%`;
-  }
-}
-
-/* ---------------- YELLOW STAGE ---------------- */
 function resetYellowStage() {
   orbDragging = false;
   orbDone = false;
 
-  if (yellowOrb) {
-    yellowOrb.style.left = "18px";
-    yellowOrb.style.top = "345px";
-  }
+  setOrbToCellCenter(mazeStartCell.col, mazeStartCell.row);
 
   yellowOrb.onmousedown = startOrbDrag;
-  yellowOrb.ontouchstart = (e) => startOrbDrag(e.touches[0]);
+  yellowOrb.ontouchstart = (e) => {
+    if (!e.touches[0]) return;
+    startOrbDrag(e.touches[0]);
+  };
 
   document.addEventListener("mousemove", moveOrbDrag);
   document.addEventListener("mouseup", endOrbDrag);
-  document.addEventListener("touchmove", touchMoveOrbDrag, { passive: false });
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!orbDragging || !e.touches[0]) return;
+      e.preventDefault();
+      moveOrbDrag(e.touches[0]);
+    },
+    { passive: false }
+  );
   document.addEventListener("touchend", endOrbDrag);
 }
 
 function initYellowStage() {
-  gameStatus.textContent = "Guide the orb to the end...";
+  gameStatus.textContent = "Guide the orb through the maze...";
+}
+
+function setOrbToCellCenter(col, row) {
+  const orbSize = 18;
+  const x = col * CELL_SIZE + (CELL_SIZE - orbSize) / 2;
+  const y = row * CELL_SIZE + (CELL_SIZE - orbSize) / 2;
+
+  yellowOrb.style.left = `${x}px`;
+  yellowOrb.style.top = `${y}px`;
 }
 
 function startOrbDrag(e) {
   if (orbDone) return;
-  orbDragging = true;
 
+  orbDragging = true;
   const orbRect = yellowOrb.getBoundingClientRect();
   orbPointerOffsetX = e.clientX - orbRect.left;
   orbPointerOffsetY = e.clientY - orbRect.top;
+
   if (e.preventDefault) e.preventDefault();
 }
 
 function moveOrbDrag(e) {
   if (!orbDragging || orbDone) return;
 
-  const wrapper = yellowOrb.parentElement.getBoundingClientRect();
-  let x = e.clientX - wrapper.left - orbPointerOffsetX;
-  let y = e.clientY - wrapper.top - orbPointerOffsetY;
+  const wrapperRect = mazeWrapper.getBoundingClientRect();
+  const orbSize = 18;
 
-  x = Math.max(4, Math.min(wrapper.width - 32, x));
-  y = Math.max(4, Math.min(wrapper.height - 32, y));
+  let x = e.clientX - wrapperRect.left - orbPointerOffsetX;
+  let y = e.clientY - wrapperRect.top - orbPointerOffsetY;
 
-  yellowOrb.style.left = `${x}px`;
-  yellowOrb.style.top = `${y}px`;
+  x = Math.max(0, Math.min(wrapperRect.width - orbSize, x));
+  y = Math.max(0, Math.min(wrapperRect.height - orbSize, y));
 
-  checkMazeEnd();
-}
+  const centerX = x + orbSize / 2;
+  const centerY = y + orbSize / 2;
 
-function touchMoveOrbDrag(e) {
-  if (!orbDragging || orbDone || !e.touches[0]) return;
-  e.preventDefault();
-  moveOrbDrag(e.touches[0]);
+  const col = Math.floor(centerX / CELL_SIZE);
+  const row = Math.floor(centerY / CELL_SIZE);
+
+  if (isOpenCell(col, row)) {
+    yellowOrb.style.left = `${x}px`;
+    yellowOrb.style.top = `${y}px`;
+    checkMazeEnd(col, row);
+  }
 }
 
 function endOrbDrag() {
   orbDragging = false;
 }
 
-function checkMazeEnd() {
+function isOpenCell(col, row) {
+  if (row < 0 || row >= MAZE_ROWS || col < 0 || col >= MAZE_COLS) return false;
+  return mazeMap[row][col] === 0;
+}
+
+function checkMazeEnd(col, row) {
   if (orbDone) return;
 
-  const orbRect = yellowOrb.getBoundingClientRect();
-  const endRect = mazeEnd.getBoundingClientRect();
-
-  const overlap = !(
-    orbRect.right < endRect.left ||
-    orbRect.left > endRect.right ||
-    orbRect.bottom < endRect.top ||
-    orbRect.top > endRect.bottom
-  );
-
-  if (overlap) {
+  if (col === mazeEndCell.col && row === mazeEndCell.row) {
     orbDone = true;
     gameStatus.textContent = "You reached the end.";
     revealInviteWithSmoke("yellow");
