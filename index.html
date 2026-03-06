@@ -19,95 +19,100 @@
   </section>
 
   <!-- PAGE 1 -->
-  <section id="page1" class="page">
-    <div class="overlay mission-overlay">
-      <h1 class="big-title">You're Invited</h1>
-      <h2>X'O Nights: Nikita Turns 21</h2>
+<section id="page1" class="page">
+  <div class="overlay mission-overlay">
+    <h1 class="big-title">You're Invited</h1>
+    <h2>X'O Nights: Nikita Turns 21</h2>
 
-      <div class="mission-game">
-        <p class="game-hint" id="gameHint">Choose carefully...</p>
+    <div class="mission-game">
+      <p class="game-hint" id="gameHint">Choose carefully...</p>
 
-        <div class="game-stage" id="gameStage">
-<!-- STAGE 1: BOMB -->
-<div class="stage-screen active" id="bombStage">
-  <div class="bomb-timer" id="bombTimer">30</div>
+      <div class="game-stage" id="gameStage">
+        <!-- STAGE 1: BOMB -->
+        <div class="stage-screen active" id="bombStage">
+          <div class="bomb-timer" id="bombTimer">30</div>
 
-  <div class="bomb-rig">
-    <div class="bomb-device" id="bombDevice">
-      <div class="bomb-top-panel"></div>
+          <div class="bomb-rig">
+            <div class="bomb-device" id="bombDevice">
+              <div class="bomb-top-panel"></div>
 
-      <div class="bomb-core-wrap">
-        <div class="bomb-core">
-          <div class="bomb-center-light"></div>
-          <div class="bomb-rivet r1"></div>
-          <div class="bomb-rivet r2"></div>
-          <div class="bomb-rivet r3"></div>
-          <div class="bomb-rivet r4"></div>
+              <div class="bomb-core-wrap">
+                <div class="bomb-core">
+                  <div class="bomb-center-light"></div>
+                  <div class="bomb-rivet r1"></div>
+                  <div class="bomb-rivet r2"></div>
+                  <div class="bomb-rivet r3"></div>
+                  <div class="bomb-rivet r4"></div>
+                </div>
+              </div>
+
+              <div class="wire-chamber curved-wires">
+                <div class="wire-line red-wire" data-wire="red">
+                  <span class="wire-anchor left-anchor"></span>
+                  <span class="wire-anchor right-anchor"></span>
+                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                    <path class="wire-curve"
+                      d="M18,12 C75,56 128,56 160,30 C192,5 246,5 302,44" />
+                  </svg>
+                </div>
+
+                <div class="wire-line green-wire" data-wire="green">
+                  <span class="wire-anchor left-anchor"></span>
+                  <span class="wire-anchor right-anchor"></span>
+                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                    <path class="wire-curve"
+                      d="M18,17 C70,0 115,0 160,30 C205,59 250,59 302,18" />
+                  </svg>
+                </div>
+
+                <div class="wire-line blue-wire" data-wire="blue">
+                  <span class="wire-anchor left-anchor"></span>
+                  <span class="wire-anchor right-anchor"></span>
+                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                    <path class="wire-curve"
+                      d="M18,40 C80,10 130,10 160,30 C190,50 240,50 302,14" />
+                  </svg>
+                </div>
+
+                <div class="wire-line yellow-wire" data-wire="yellow">
+                  <span class="wire-anchor left-anchor"></span>
+                  <span class="wire-anchor right-anchor"></span>
+                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                    <path class="wire-curve"
+                      d="M18,24 C90,58 126,58 160,30 C194,2 230,2 302,34" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="slice-guide">Swipe up or down on a wire to cut it</div>
+            </div>
+          </div>
+
+          <div class="explosion-flash" id="explosionFlash"></div>
+        </div>
+
+        <!-- STAGE 2A: GREEN RUNNER -->
+        <div class="stage-screen" id="greenStage">
+          <div class="runner-instructions">Catch the figure</div>
+          <div class="runner-area" id="runnerArea">
+            <div class="green-runner" id="greenRunner"></div>
+          </div>
+        </div>
+
+        <!-- STAGE 2B: BLUE CLOCK -->
+        <div class="stage-screen" id="blueStage">
+          <div class="clock-title">Swipe forward into tomorrow</div>
+          <div class="digital-clock-panel" id="digitalClockPanel">
+            <div class="digital-clock-readout" id="digitalClockReadout">23:45</div>
+            <div class="clock-subtext">Swipe up until it becomes 00:01</div>
+          </div>
         </div>
       </div>
 
-      <div class="wire-chamber curved-wires">
-        <div class="wire-line red-wire" data-wire="red">
-          <span class="wire-anchor left-anchor"></span>
-          <span class="wire-anchor right-anchor"></span>
-          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-            <path class="wire-curve"
-              d="M18,12 C75,56 128,56 160,30 C192,5 246,5 302,44" />
-          </svg>
-        </div>
-
-        <div class="wire-line green-wire" data-wire="green">
-          <span class="wire-anchor left-anchor"></span>
-          <span class="wire-anchor right-anchor"></span>
-          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-            <path class="wire-curve"
-              d="M18,17 C70,0 115,0 160,30 C205,59 250,59 302,18" />
-          </svg>
-        </div>
-
-        <div class="wire-line blue-wire" data-wire="blue">
-          <span class="wire-anchor left-anchor"></span>
-          <span class="wire-anchor right-anchor"></span>
-          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-            <path class="wire-curve"
-              d="M18,40 C80,10 130,10 160,30 C190,50 240,50 302,14" />
-          </svg>
-        </div>
-
-        <div class="wire-line yellow-wire" data-wire="yellow">
-          <span class="wire-anchor left-anchor"></span>
-          <span class="wire-anchor right-anchor"></span>
-          <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-            <path class="wire-curve"
-              d="M18,24 C90,58 126,58 160,30 C194,2 230,2 302,34" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="slice-guide">Swipe up or down on a wire to cut it</div>
+      <p class="game-status" id="gameStatus">A ticking choice waits for you...</p>
     </div>
   </div>
-
-  <div class="explosion-flash" id="explosionFlash"></div>
-</div>
-
-          <!-- STAGE 2A: GREEN RUNNER -->
-          <div class="stage-screen" id="greenStage">
-            <div class="runner-instructions">Catch the figure</div>
-            <div class="runner-area" id="runnerArea">
-              <div class="green-runner" id="greenRunner"></div>
-            </div>
-          </div>
-
-          <!-- STAGE 2B: BLUE CLOCK -->
-          <div class="stage-screen" id="blueStage">
-            <div class="clock-title">Swipe forward into tomorrow</div>
-            <div class="digital-clock-panel" id="digitalClockPanel">
-              <div class="digital-clock-readout" id="digitalClockReadout">23:45</div>
-              <div class="clock-subtext">Swipe up until it becomes 00:01</div>
-            </div>
-          </div>
-
+</section>
   <!-- PAGE 2 -->
   <section id="page2" class="page light-page">
     <div class="two-column">
