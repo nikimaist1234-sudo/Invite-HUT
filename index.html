@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <div class="slice-guide">Swipe across a wire to cut it</div>
+      <div class="slice-guide">Swipe up or down on a wire to cut it</div>
     </div>
   </div>
 
@@ -109,17 +109,46 @@
           </div>
 
           <!-- STAGE 2C: YELLOW MAZE -->
-          <div class="stage-screen" id="yellowStage">
-            <div class="maze-title">Guide the orb to the end</div>
+<div class="stage-screen" id="yellowStage">
+  <div class="maze-title">Guide the orb to the end</div>
 
-            <div class="maze-grid-wrapper" id="mazeWrapper">
-              <div class="maze-grid" id="mazeGrid"></div>
-              <div class="maze-start">START</div>
-              <div class="maze-end" id="mazeEnd">END</div>
-              <div class="yellow-orb" id="yellowOrb"></div>
-            </div>
-          </div>
-        </div>
+  <div class="maze-grid-wrapper maze-image-style" id="mazeWrapper">
+    <svg class="maze-svg" id="mazeSvg" viewBox="0 0 400 340" preserveAspectRatio="none" aria-hidden="true">
+      <!-- outer border -->
+      <line x1="30" y1="20" x2="30" y2="290" />
+      <line x1="30" y1="290" x2="350" y2="290" />
+      <line x1="350" y1="290" x2="350" y2="20" />
+      <line x1="30" y1="20" x2="120" y2="20" />
+      <line x1="165" y1="20" x2="350" y2="20" />
+
+      <!-- inner walls matching the uploaded maze style -->
+      <line x1="120" y1="20" x2="120" y2="105" />
+      <line x1="75" y1="60" x2="75" y2="145" />
+      <line x1="120" y1="60" x2="245" y2="60" />
+      <line x1="165" y1="60" x2="165" y2="195" />
+      <line x1="120" y1="60" x2="120" y2="20" />
+      <line x1="215" y1="105" x2="215" y2="145" />
+      <line x1="305" y1="20" x2="305" y2="145" />
+      <line x1="305" y1="60" x2="350" y2="60" />
+      <line x1="305" y1="105" x2="350" y2="105" />
+      <line x1="215" y1="145" x2="350" y2="145" />
+      <line x1="30" y1="145" x2="120" y2="145" />
+      <line x1="165" y1="195" x2="260" y2="195" />
+      <line x1="75" y1="195" x2="75" y2="235" />
+      <line x1="30" y1="235" x2="75" y2="235" />
+      <line x1="120" y1="195" x2="120" y2="235" />
+      <line x1="260" y1="195" x2="260" y2="235" />
+      <line x1="215" y1="235" x2="260" y2="235" />
+      <line x1="305" y1="195" x2="305" y2="235" />
+      <line x1="120" y1="235" x2="120" y2="290" />
+      <line x1="215" y1="235" x2="215" y2="290" />
+    </svg>
+
+    <div class="maze-start" id="mazeStart">START</div>
+    <div class="maze-end" id="mazeEnd"></div>
+    <div class="yellow-orb" id="yellowOrb"></div>
+  </div>
+</div>
 
         <p class="game-status" id="gameStatus">A ticking choice waits for you...</p>
       </div>
