@@ -12,8 +12,7 @@ html, body {
 
 .page {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   min-height: 100vh;
   padding: 40px;
@@ -67,7 +66,7 @@ html, body {
   margin-bottom: 10px;
 }
 
-/* GAME */
+/* GAME AREA */
 .mission-game {
   margin-top: 18px;
 }
@@ -107,7 +106,7 @@ html, body {
   display: flex;
 }
 
-/* BOMB STAGE */
+/* BOMB */
 .bomb-timer {
   font-size: clamp(3rem, 8vw, 5rem);
   font-weight: 900;
@@ -116,84 +115,209 @@ html, body {
   margin-bottom: 16px;
 }
 
-.bomb-shell {
+.bomb-rig {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.bomb-device {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: min(360px, 92%);
+  padding: 20px 18px 22px;
+  border-radius: 18px;
+  background:
+    linear-gradient(to bottom, #5f5f5f, #2d2d2d 35%, #161616 70%, #0d0d0d);
+  border: 2px solid rgba(255,255,255,0.08);
+  box-shadow:
+    inset 0 0 25px rgba(255,255,255,0.04),
+    0 10px 24px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.bomb-top-panel {
+  height: 16px;
+  width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(to right, #8b8b8b, #3d3d3d, #8b8b8b);
+  margin-bottom: 14px;
+}
+
+.bomb-core-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.bomb-core {
+  position: relative;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 35% 35%, #4a4a4a, #1a1a1a 60%, #000 100%);
-  border: 3px solid rgba(255,255,255,0.12);
-  box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
-  margin-bottom: 20px;
+    radial-gradient(circle at 35% 35%, #5c5c5c, #1e1e1e 55%, #090909 100%);
+  border: 4px solid rgba(255,255,255,0.08);
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.03),
+    0 0 24px rgba(0,0,0,0.45);
+  z-index: 3;
 }
 
-.bomb-cap {
+.bomb-center-light {
   position: absolute;
-  top: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 34px;
-  height: 26px;
-  border-radius: 8px 8px 0 0;
-  background: #777;
+  inset: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff9d9d, #ff2c2c 65%, #8a0000);
+  box-shadow: 0 0 18px rgba(255,0,0,0.45);
+  animation: centerBlink 0.6s infinite alternate;
 }
 
-.bomb-spark {
+@keyframes centerBlink {
+  from { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+  to { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+}
+
+.bomb-rivet {
   position: absolute;
-  top: -42px;
-  left: 50%;
-  width: 4px;
-  height: 32px;
-  background: linear-gradient(to top, #999, #fff5b8);
-  transform: translateX(-50%) rotate(15deg);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #8a8a8a;
+  box-shadow: inset 0 0 3px rgba(255,255,255,0.18);
 }
 
-.bomb-spark::after {
+.r1 { top: 14px; left: 50%; transform: translateX(-50%); }
+.r2 { bottom: 14px; left: 50%; transform: translateX(-50%); }
+.r3 { left: 14px; top: 50%; transform: translateY(-50%); }
+.r4 { right: 14px; top: 50%; transform: translateY(-50%); }
+
+.wire-chamber.curved-wires {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: -6px;
+}
+
+.wire-line {
+  position: relative;
+  width: 100%;
+  height: 54px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.wire-anchor {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #bdbdbd, #585858 70%, #1e1e1e);
+  box-shadow:
+    inset 0 0 4px rgba(255,255,255,0.14),
+    0 0 4px rgba(0,0,0,0.35);
+  z-index: 3;
+}
+
+.left-anchor { left: 2px; }
+.right-anchor { right: 2px; }
+
+.wire-svg {
+  position: absolute;
+  inset: 0 10px;
+  width: calc(100% - 20px);
+  height: 100%;
+  overflow: visible;
+  z-index: 2;
+}
+
+.wire-curve {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  filter:
+    drop-shadow(0 1px 1px rgba(255,255,255,0.18))
+    drop-shadow(0 2px 3px rgba(0,0,0,0.35));
+}
+
+.red-wire .wire-curve {
+  stroke: url(#redWireGradient);
+  stroke: #c01212;
+}
+
+.green-wire .wire-curve {
+  stroke: #1fa53d;
+}
+
+.blue-wire .wire-curve {
+  stroke: #2f74de;
+}
+
+.yellow-wire .wire-curve {
+  stroke: #d4a400;
+}
+
+/* fake cable shine */
+.red-wire .wire-curve,
+.green-wire .wire-curve,
+.blue-wire .wire-curve,
+.yellow-wire .wire-curve {
+  stroke-linejoin: round;
+}
+
+.red-wire::after,
+.green-wire::after,
+.blue-wire::after,
+.yellow-wire::after {
   content: "";
   position: absolute;
-  top: -10px;
-  left: -6px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff4a8, #ffb300 60%, transparent 70%);
-  animation: sparkPulse 0.35s infinite alternate;
-}
-
-@keyframes sparkPulse {
-  from { transform: scale(0.85); opacity: 0.7; }
-  to { transform: scale(1.15); opacity: 1; }
-}
-
-.wire-board {
-  width: min(320px, 90%);
-}
-
-.wire-row {
-  margin-bottom: 12px;
-}
-
-.wire-btn {
-  width: 100%;
-  padding: 14px 16px;
-  border: none;
+  left: 28px;
+  right: 28px;
+  top: 50%;
+  height: 18px;
+  transform: translateY(-50%);
+  opacity: 0.18;
   border-radius: 999px;
-  font-weight: 800;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.18s ease, filter 0.18s ease;
+  pointer-events: none;
 }
 
-.wire-btn:hover {
-  transform: scale(1.03);
-  filter: brightness(1.08);
+.red-wire::after {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.32), transparent 58%);
+}
+.green-wire::after {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.34), transparent 58%);
+}
+.blue-wire::after {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.34), transparent 58%);
+}
+.yellow-wire::after {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.34), transparent 58%);
 }
 
-.red-wire { background: linear-gradient(to right, #7b0000, #ff2e2e); }
-.green-wire { background: linear-gradient(to right, #0f5f1b, #27ff63); color: #071a0b; }
-.blue-wire { background: linear-gradient(to right, #003975, #34a3ff); }
-.yellow-wire { background: linear-gradient(to right, #b98a00, #ffd84a); color: #302300; }
+/* cut effect */
+.wire-line.cut .wire-svg {
+  opacity: 0.78;
+}
+
+.wire-line.cut .wire-curve {
+  stroke-dasharray: 120 34 120;
+}
+
+.red-wire.cut .wire-curve { stroke: #8e0a0a; }
+.green-wire.cut .wire-curve { stroke: #15742a; }
+.blue-wire.cut .wire-curve { stroke: #1d4f9e; }
+.yellow-wire.cut .wire-curve { stroke: #9b7b00; }
+
+.slice-guide {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  opacity: 0.82;
+}
 
 .explosion-flash {
   position: absolute;
@@ -209,17 +333,130 @@ html, body {
   opacity: 1;
 }
 
-.bomb-shell.explode {
+.bomb-device.explode {
   animation: bombExplode 0.4s ease forwards;
 }
 
 @keyframes bombExplode {
   0% { transform: scale(1); opacity: 1; }
-  35% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.2); opacity: 0; }
+  35% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(0.18); opacity: 0; }
 }
 
-/* GREEN STAGE */
+.bomb-rivet {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #8a8a8a;
+  box-shadow: inset 0 0 3px rgba(255,255,255,0.18);
+}
+
+.r1 { top: 14px; left: 50%; transform: translateX(-50%); }
+.r2 { bottom: 14px; left: 50%; transform: translateX(-50%); }
+.r3 { left: 14px; top: 50%; transform: translateY(-50%); }
+.r4 { right: 14px; top: 50%; transform: translateY(-50%); }
+
+.wire-chamber {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wire-line {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.wire-left-cap,
+.wire-right-cap {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 6px;
+  background: linear-gradient(to bottom, #9a9a9a, #505050);
+  box-shadow: inset 0 0 5px rgba(255,255,255,0.08);
+}
+
+.wire-left-cap { left: 0; }
+.wire-right-cap { right: 0; }
+
+.wire-path {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 50%;
+  height: 10px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.25),
+    0 0 10px rgba(0,0,0,0.22);
+}
+
+.red-wire .wire-path {
+  background: linear-gradient(to bottom, #ff7c7c, #b10000 55%, #5e0000);
+}
+.green-wire .wire-path {
+  background: linear-gradient(to bottom, #a9ffb5, #22a43d 55%, #0c4d1b);
+}
+.blue-wire .wire-path {
+  background: linear-gradient(to bottom, #b6dfff, #2571db 55%, #0d3775);
+}
+.yellow-wire .wire-path {
+  background: linear-gradient(to bottom, #fff1a3, #e0ad00 55%, #806000);
+}
+
+.wire-line.cut .wire-path {
+  background:
+    linear-gradient(to right,
+      currentColor 0 42%,
+      transparent 42% 58%,
+      currentColor 58% 100%);
+  opacity: 0.75;
+}
+
+.red-wire.cut { color: #b10000; }
+.green-wire.cut { color: #22a43d; }
+.blue-wire.cut { color: #2571db; }
+.yellow-wire.cut { color: #e0ad00; }
+
+.slice-guide {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  opacity: 0.82;
+}
+
+.explosion-flash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255,224,92,1), rgba(255,89,0,0.95) 35%, rgba(255,0,0,0.82) 55%, rgba(0,0,0,0.2) 80%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.explosion-flash.active {
+  opacity: 1;
+}
+
+.bomb-device.explode {
+  animation: bombExplode 0.4s ease forwards;
+}
+
+@keyframes bombExplode {
+  0% { transform: scale(1); opacity: 1; }
+  35% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(0.18); opacity: 0; }
+}
+
+/* GREEN RUNNER */
 .runner-instructions {
   margin-bottom: 16px;
   font-weight: 800;
@@ -282,132 +519,122 @@ html, body {
   opacity: 0.7;
 }
 
-/* BLUE STAGE */
-.timeline-title {
-  margin-bottom: 22px;
+/* BLUE CLOCK */
+.clock-title {
+  margin-bottom: 20px;
   font-weight: 800;
   color: #6ec3ff;
 }
 
-.timeline-track {
-  position: relative;
-  width: min(340px, 90%);
-  height: 20px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.09);
-  border: 1px solid rgba(255,255,255,0.12);
-  margin-top: 22px;
+.digital-clock-panel {
+  width: min(320px, 90%);
+  padding: 28px 18px;
+  border-radius: 18px;
+  background:
+    linear-gradient(to bottom, #111, #060606);
+  border: 2px solid rgba(88, 190, 255, 0.35);
+  box-shadow:
+    inset 0 0 30px rgba(104, 196, 255, 0.08),
+    0 0 24px rgba(55, 147, 255, 0.15);
+  touch-action: none;
 }
 
-.timeline-glow {
-  position: absolute;
-  inset: -16px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(70,170,255,0.18), transparent 70%);
+.digital-clock-readout {
+  font-family: "Courier New", monospace;
+  font-size: clamp(2.7rem, 9vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #7fd1ff;
+  text-shadow: 0 0 16px rgba(90, 196, 255, 0.45);
 }
 
-.timeline-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%;
-  border-radius: 999px;
-  background: linear-gradient(to right, #2e6dff, #65d7ff);
-  box-shadow: 0 0 18px rgba(80,180,255,0.45);
+.clock-subtext {
+  margin-top: 16px;
+  font-size: 0.92rem;
+  opacity: 0.88;
 }
 
-.timeline-handle {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translate(-50%, -50%);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #d5f1ff, #53b8ff);
-  box-shadow: 0 0 18px rgba(83,184,255,0.6);
-  cursor: grab;
-  z-index: 3;
+.digital-clock-panel.done {
+  box-shadow:
+    inset 0 0 32px rgba(104, 196, 255, 0.18),
+    0 0 32px rgba(55, 147, 255, 0.28);
 }
 
-.timeline-marker {
-  position: absolute;
-  top: -34px;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.today-marker { left: 0; }
-.tomorrow-marker { right: 0; color: #96dbff; }
-
-/* YELLOW STAGE */
+/* YELLOW MAZE */
 .maze-title {
   margin-bottom: 16px;
   font-weight: 800;
   color: #ffd75d;
 }
 
-.maze-wrapper {
+.maze-grid-wrapper {
   position: relative;
-  width: 320px;
-  height: 420px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.03);
+  width: 352px;
+  height: 264px;
+  background: #efefef;
+  border: 12px solid #101010;
   overflow: hidden;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
 }
 
-.maze-svg {
+.maze-grid {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  display: grid;
+  background: #efefef;
 }
 
-.maze-wall {
-  fill: none;
-  stroke: rgba(255, 217, 74, 0.95);
-  stroke-width: 18;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 8px rgba(255,217,74,0.4));
+.maze-cell.wall {
+  background:
+    linear-gradient(to bottom, #1f1f1f, #050505 60%);
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: inset 0 0 2px rgba(255,255,255,0.05);
+}
+
+.maze-cell.open {
+  background: #efefef;
 }
 
 .maze-start,
 .maze-end {
   position: absolute;
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 1px;
+  z-index: 3;
+  color: #333;
+  background: rgba(255,255,255,0.85);
+  padding: 2px 5px;
+  border-radius: 4px;
 }
 
 .maze-start {
-  left: 10px;
-  bottom: 10px;
-  color: #fff5bf;
+  left: 22px;
+  bottom: 18px;
 }
 
 .maze-end {
-  right: 16px;
-  top: 16px;
-  color: #fff5bf;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255, 217, 74, 0.12);
-  border: 1px solid rgba(255, 217, 74, 0.3);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0;
+  border-radius: 50%;
+  background: rgba(255, 217, 74, 0.28);
+  border: 2px solid rgba(220, 175, 0, 0.9);
 }
 
 .yellow-orb {
   position: absolute;
-  width: 28px;
-  height: 28px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  left: 18px;
-  top: 345px;
   background: radial-gradient(circle, #fff4b6, #ffd64e 60%, #ffb300 85%);
   box-shadow: 0 0 20px rgba(255,214,78,0.65);
   cursor: grab;
-  z-index: 2;
+  z-index: 4;
+  touch-action: none;
 }
 
 /* STATUS */
@@ -698,19 +925,18 @@ body.scroll-mode #page4 {
   }
 
   .game-stage {
-    width: min(360px, 88vw);
+    width: min(360px, 90vw);
     height: 560px;
     min-height: 560px;
   }
 
-  .bomb-shell {
-    width: 132px;
-    height: 132px;
+  .bomb-device {
+    width: 100%;
   }
 
-  .maze-wrapper {
-    width: 290px;
-    height: 390px;
+  .maze-grid-wrapper {
+    transform: scale(0.9);
+    transform-origin: center;
   }
 
   .two-column {
