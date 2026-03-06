@@ -246,7 +246,6 @@ html, body {
 }
 
 .red-wire .wire-curve {
-  stroke: url(#redWireGradient);
   stroke: #c01212;
 }
 
@@ -289,12 +288,15 @@ html, body {
 .red-wire::after {
   background: linear-gradient(to bottom, rgba(255,255,255,0.32), transparent 58%);
 }
+
 .green-wire::after {
   background: linear-gradient(to bottom, rgba(255,255,255,0.34), transparent 58%);
 }
+
 .blue-wire::after {
   background: linear-gradient(to bottom, rgba(255,255,255,0.34), transparent 58%);
 }
+
 .yellow-wire::after {
   background: linear-gradient(to bottom, rgba(255,255,255,0.34), transparent 58%);
 }
@@ -312,119 +314,6 @@ html, body {
 .green-wire.cut .wire-curve { stroke: #15742a; }
 .blue-wire.cut .wire-curve { stroke: #1d4f9e; }
 .yellow-wire.cut .wire-curve { stroke: #9b7b00; }
-
-.slice-guide {
-  margin-top: 14px;
-  font-size: 0.9rem;
-  opacity: 0.82;
-}
-
-.explosion-flash {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle, rgba(255,224,92,1), rgba(255,89,0,0.95) 35%, rgba(255,0,0,0.82) 55%, rgba(0,0,0,0.2) 80%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.explosion-flash.active {
-  opacity: 1;
-}
-
-.bomb-device.explode {
-  animation: bombExplode 0.4s ease forwards;
-}
-
-@keyframes bombExplode {
-  0% { transform: scale(1); opacity: 1; }
-  35% { transform: scale(1.12); opacity: 1; }
-  100% { transform: scale(0.18); opacity: 0; }
-}
-
-.bomb-rivet {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #8a8a8a;
-  box-shadow: inset 0 0 3px rgba(255,255,255,0.18);
-}
-
-.r1 { top: 14px; left: 50%; transform: translateX(-50%); }
-.r2 { bottom: 14px; left: 50%; transform: translateX(-50%); }
-.r3 { left: 14px; top: 50%; transform: translateY(-50%); }
-.r4 { right: 14px; top: 50%; transform: translateY(-50%); }
-
-.wire-chamber {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.wire-line {
-  position: relative;
-  width: 100%;
-  height: 30px;
-  cursor: pointer;
-  touch-action: none;
-}
-
-.wire-left-cap,
-.wire-right-cap {
-  position: absolute;
-  top: 50%;
-  width: 22px;
-  height: 18px;
-  transform: translateY(-50%);
-  border-radius: 6px;
-  background: linear-gradient(to bottom, #9a9a9a, #505050);
-  box-shadow: inset 0 0 5px rgba(255,255,255,0.08);
-}
-
-.wire-left-cap { left: 0; }
-.wire-right-cap { right: 0; }
-
-.wire-path {
-  position: absolute;
-  left: 18px;
-  right: 18px;
-  top: 50%;
-  height: 10px;
-  transform: translateY(-50%);
-  border-radius: 999px;
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.25),
-    0 0 10px rgba(0,0,0,0.22);
-}
-
-.red-wire .wire-path {
-  background: linear-gradient(to bottom, #ff7c7c, #b10000 55%, #5e0000);
-}
-.green-wire .wire-path {
-  background: linear-gradient(to bottom, #a9ffb5, #22a43d 55%, #0c4d1b);
-}
-.blue-wire .wire-path {
-  background: linear-gradient(to bottom, #b6dfff, #2571db 55%, #0d3775);
-}
-.yellow-wire .wire-path {
-  background: linear-gradient(to bottom, #fff1a3, #e0ad00 55%, #806000);
-}
-
-.wire-line.cut .wire-path {
-  background:
-    linear-gradient(to right,
-      currentColor 0 42%,
-      transparent 42% 58%,
-      currentColor 58% 100%);
-  opacity: 0.75;
-}
-
-.red-wire.cut { color: #b10000; }
-.green-wire.cut { color: #22a43d; }
-.blue-wire.cut { color: #2571db; }
-.yellow-wire.cut { color: #e0ad00; }
 
 .slice-guide {
   margin-top: 14px;
@@ -855,11 +744,6 @@ body.scroll-mode #page4 {
 
   .bomb-device {
     width: 100%;
-  }
-
-  .maze-grid-wrapper {
-    transform: scale(0.9);
-    transform-origin: center;
   }
 
   .two-column {
