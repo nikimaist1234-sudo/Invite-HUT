@@ -7,7 +7,6 @@ const gameStatus = document.getElementById("gameStatus");
 const bombStage = document.getElementById("bombStage");
 const greenStage = document.getElementById("greenStage");
 const blueStage = document.getElementById("blueStage");
-const yellowStage = document.getElementById("yellowStage");
 
 const bombTimer = document.getElementById("bombTimer");
 const bombDevice = document.getElementById("bombDevice");
@@ -34,7 +33,6 @@ let runnerCaught = false;
 let clockMinutes = 23 * 60 + 45;
 let clockDone = false;
 let clockSwipeStartY = 0;
-let clockSwipeAccumulator = 0;
 
 startBtn?.addEventListener("click", () => {
   showOnlyPage(1);
@@ -48,25 +46,30 @@ function showOnlyPage(pageNumber) {
   if (el) el.classList.add("active");
 }
 
+function setGameText(hint, status) {
+  if (gameHint) gameHint.textContent = hint;
+  if (gameStatus) gameStatus.textContent = status;
+}
+
 function initGame() {
   missionLocked = false;
   stopBombCountdown();
   cancelRunnerAnimation();
 
-  colorSmokeOverlay.className = "color-smoke-overlay";
+  if (colorSmokeOverlay) {
+    colorSmokeOverlay.className = "color-smoke-overlay";
+  }
 
   resetBombStage();
   resetGreenStage();
   resetBlueStage();
 
   showStage("bomb");
-
-  gameHint.textContent = "Choose carefully...";
-  gameStatus.textContent = "A ticking choice waits for you...";
+  setGameText("Choose carefully...", "A ticking choice waits for you...");
 }
 
 function showStage(stageName) {
-  [bombStage, greenStage, blueStage, yellowStage].forEach((stage) => {
+  [bombStage, greenStage, blueStage].forEach((stage) => {
     if (stage) stage.classList.remove("active");
   });
 
@@ -133,7 +136,6 @@ function setupWireSlicing() {
       const dx = clientX - startX;
       const dy = clientY - startY;
 
-      /* vertical swipe on the chosen wire */
       if (Math.abs(dy) > 55 && Math.abs(dy) > Math.abs(dx) * 1.2) {
         slicing = false;
         cutWire(wire.dataset.wire, wire);
@@ -159,6 +161,7 @@ function setupWireSlicing() {
     wire.onmouseup = endSlice;
     wire.onmouseleave = endSlice;
     wire.ontouchend = endSlice;
+    wire.ontouchcancel = endSlice;
   });
 }
 
@@ -170,15 +173,13 @@ function cutWire(color, wireEl) {
   wireEl.classList.add("cut");
   wireLines.forEach((w) => (w.style.pointerEvents = "none"));
 
-  /* red and yellow now both fail */
   if (color === "red" || color === "yellow") {
     explodeBombAndRetry("Wrong wire...");
     return;
   }
 
   if (color === "green") {
-    gameHint.textContent = "Catch the figure";
-    gameStatus.textContent = "It won't stop for long...";
+    setGameText("Catch the figure", "It won't stop for long...");
     setTimeout(() => {
       showStage("green");
       initGreenStage();
@@ -186,8 +187,7 @@ function cutWire(color, wireEl) {
   }
 
   if (color === "blue") {
-    gameHint.textContent = "Swipe the clock into tomorrow";
-    gameStatus.textContent = "Push time forward...";
+    setGameText("Swipe the clock into tomorrow", "Push time forward...");
     setTimeout(() => {
       showStage("blue");
       initBlueStage();
@@ -199,8 +199,7 @@ function explodeBombAndRetry(message) {
   missionLocked = true;
   bombDevice?.classList.add("explode");
   explosionFlash?.classList.add("active");
-  gameStatus.textContent = message;
-  gameHint.textContent = "Try again";
+  setGameText("Try again", message);
 
   setTimeout(() => {
     explosionFlash?.classList.remove("active");
@@ -218,9 +217,6 @@ function resetGreenStage() {
     greenRunner.style.left = "-60px";
     greenRunner.style.top = "55%";
     greenRunner.classList.remove("caught");
-  }
-
-  if (greenRunner) {
     greenRunner.onclick = catchGreenRunner;
     greenRunner.ontouchstart = catchGreenRunner;
   }
@@ -232,7 +228,7 @@ function initGreenStage() {
   let phase = 0;
 
   function animateRunner() {
-    if (runnerCaught) return;
+    if (runnerCaught || !greenRunner || !runnerArea) return;
 
     const areaRect = runnerArea.getBoundingClientRect();
     const maxX = Math.max(20, areaRect.width - 70);
@@ -263,12 +259,12 @@ function cancelRunnerAnimation() {
 
 function catchGreenRunner(e) {
   if (runnerCaught) return;
-  if (e) e.preventDefault();
+  e?.preventDefault();
 
   runnerCaught = true;
   cancelRunnerAnimation();
-  greenRunner.classList.add("caught");
-  gameStatus.textContent = "Caught.";
+  greenRunner?.classList.add("caught");
+  setGameText("Caught.", "Nice one.");
   revealInviteWithSmoke("green");
 }
 
@@ -276,7 +272,6 @@ function catchGreenRunner(e) {
 function resetBlueStage() {
   clockMinutes = 23 * 60 + 45;
   clockDone = false;
-  clockSwipeAccumulator = 0;
   updateClockReadout();
 
   let active = false;
@@ -291,6 +286,7 @@ function resetBlueStage() {
     if (!active || clockDone) return;
 
     const deltaY = clockSwipeStartY - clientY;
+
     if (Math.abs(deltaY) >= 18) {
       const minuteSteps = Math.floor(Math.abs(deltaY) / 18);
       if (minuteSteps > 0) {
@@ -304,8 +300,8 @@ function resetBlueStage() {
     if (clockMinutes >= 24 * 60 + 1) {
       active = false;
       clockDone = true;
-      gameStatus.textContent = "Tomorrow reached.";
-      digitalClockPanel.classList.add("done");
+      setGameText("Tomorrow reached.", "You made it.");
+      digitalClockPanel?.classList.add("done");
       revealInviteWithSmoke("blue");
     }
   };
@@ -333,10 +329,11 @@ function resetBlueStage() {
   digitalClockPanel.onmouseup = end;
   digitalClockPanel.onmouseleave = end;
   digitalClockPanel.ontouchend = end;
+  digitalClockPanel.ontouchcancel = end;
 }
 
 function initBlueStage() {
-  gameStatus.textContent = "Swipe upward to push time forward...";
+  setGameText("Swipe the clock into tomorrow", "Swipe upward to push time forward...");
 }
 
 function updateClockReadout() {
@@ -358,10 +355,12 @@ function revealInviteWithSmoke(color) {
   stopBombCountdown();
   cancelRunnerAnimation();
 
-  colorSmokeOverlay.className = `color-smoke-overlay active ${color}`;
+  if (colorSmokeOverlay) {
+    colorSmokeOverlay.className = `color-smoke-overlay active ${color}`;
+  }
 
   setTimeout(() => {
-    colorSmokeOverlay.classList.add("swipe-up");
+    colorSmokeOverlay?.classList.add("swipe-up");
     document.body.classList.add("launch-reveal");
   }, 1800);
 
