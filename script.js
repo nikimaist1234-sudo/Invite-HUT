@@ -22,7 +22,6 @@ const digitalClockReadout = document.getElementById("digitalClockReadout");
 
 const yellowOrb = document.getElementById("yellowOrb");
 const mazeWrapper = document.getElementById("mazeWrapper");
-const mazeGrid = document.getElementById("mazeGrid");
 const mazeEnd = document.getElementById("mazeEnd");
 
 const colorSmokeOverlay = document.getElementById("colorSmokeOverlay");
@@ -39,35 +38,53 @@ let runnerCaught = false;
 let clockMinutes = 23 * 60 + 45;
 let clockDone = false;
 let clockSwipeStartY = 0;
-let clockSwipeAccumulator = 0;
 
 let orbDragging = false;
 let orbDone = false;
 let orbPointerOffsetX = 0;
 let orbPointerOffsetY = 0;
+let orbX = 0;
+let orbY = 0;
 
-const MAZE_COLS = 16;
-const MAZE_ROWS = 12;
-const CELL_SIZE = 22;
+const ORB_SIZE = 18;
+const ORB_RADIUS = ORB_SIZE / 2;
 
-/* 1 = wall, 0 = open */
-const mazeMap = [
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1],
-  [1,0,1,1,1,0,1,1,0,1,0,1,0,1,0,1],
-  [1,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1],
-  [1,1,1,0,1,1,1,0,1,1,0,1,1,1,0,1],
-  [1,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1],
-  [1,0,1,1,1,0,1,0,1,1,1,1,0,1,1,1],
-  [1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1],
-  [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1],
-  [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1],
-  [1,0,1,1,1,1,1,1,1,0,1,1,1,1,0,1],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+/* MAZE WALLS based on uploaded reference image */
+const mazeWalls = [
+  // outer border
+  { x1: 30, y1: 20, x2: 30, y2: 290 },
+  { x1: 30, y1: 290, x2: 350, y2: 290 },
+  { x1: 350, y1: 290, x2: 350, y2: 20 },
+  { x1: 30, y1: 20, x2: 120, y2: 20 },
+  { x1: 165, y1: 20, x2: 350, y2: 20 },
+
+  // inner walls
+  { x1: 120, y1: 20, x2: 120, y2: 105 },
+  { x1: 75, y1: 60, x2: 75, y2: 145 },
+  { x1: 120, y1: 60, x2: 245, y2: 60 },
+  { x1: 165, y1: 60, x2: 165, y2: 195 },
+  { x1: 215, y1: 105, x2: 215, y2: 145 },
+  { x1: 305, y1: 20, x2: 305, y2: 145 },
+  { x1: 305, y1: 60, x2: 350, y2: 60 },
+  { x1: 305, y1: 105, x2: 350, y2: 105 },
+  { x1: 215, y1: 145, x2: 350, y2: 145 },
+  { x1: 30, y1: 145, x2: 120, y2: 145 },
+  { x1: 165, y1: 195, x2: 260, y2: 195 },
+  { x1: 75, y1: 195, x2: 75, y2: 235 },
+  { x1: 30, y1: 235, x2: 75, y2: 235 },
+  { x1: 120, y1: 195, x2: 120, y2: 235 },
+  { x1: 260, y1: 195, x2: 260, y2: 235 },
+  { x1: 215, y1: 235, x2: 260, y2: 235 },
+  { x1: 305, y1: 195, x2: 305, y2: 235 },
+  { x1: 120, y1: 235, x2: 120, y2: 290 },
+  { x1: 215, y1: 235, x2: 215, y2: 290 }
 ];
 
-const mazeStartCell = { col: 1, row: 9 };
-const mazeEndCell = { col: 14, row: 10 };
+const mazeStartPoint = { x: 45, y: 170 };
+const mazeEndPoint = { x: 333, y: 45 };
+const END_RADIUS = 18;
+const WALL_THICKNESS = 10;
+const COLLISION_BUFFER = ORB_RADIUS + WALL_THICKNESS / 2 - 1;
 
 startBtn?.addEventListener("click", () => {
   showOnlyPage(1);
@@ -91,7 +108,6 @@ function initGame() {
   resetBombStage();
   resetGreenStage();
   resetBlueStage();
-  renderMaze();
   resetYellowStage();
 
   showStage("bomb");
@@ -124,7 +140,7 @@ function resetBombStage() {
     wire.style.pointerEvents = "auto";
   });
 
-  setupWireSlicing();
+  setupWireSwipes();
   startBombCountdown();
 }
 
@@ -150,50 +166,51 @@ function stopBombCountdown() {
   }
 }
 
-function setupWireSlicing() {
+function setupWireSwipes() {
   wireLines.forEach((wire) => {
     let startX = 0;
     let startY = 0;
-    let slicing = false;
+    let active = false;
 
-    const startSlice = (clientX, clientY) => {
+    const startSwipe = (clientX, clientY) => {
       if (missionLocked) return;
-      slicing = true;
+      active = true;
       startX = clientX;
       startY = clientY;
     };
 
-    const moveSlice = (clientX, clientY) => {
-      if (!slicing || missionLocked) return;
+    const moveSwipe = (clientX, clientY) => {
+      if (!active || missionLocked) return;
 
       const dx = clientX - startX;
       const dy = clientY - startY;
 
-      if (Math.abs(dx) > 70 && Math.abs(dy) < 45) {
-        slicing = false;
+      // require a strong vertical swipe on the chosen wire
+      if (Math.abs(dy) > 55 && Math.abs(dy) > Math.abs(dx) * 1.2) {
+        active = false;
         cutWire(wire.dataset.wire, wire);
       }
     };
 
-    const endSlice = () => {
-      slicing = false;
+    const endSwipe = () => {
+      active = false;
     };
 
-    wire.onmousedown = (e) => startSlice(e.clientX, e.clientY);
+    wire.onmousedown = (e) => startSwipe(e.clientX, e.clientY);
     wire.ontouchstart = (e) => {
       if (!e.touches[0]) return;
-      startSlice(e.touches[0].clientX, e.touches[0].clientY);
+      startSwipe(e.touches[0].clientX, e.touches[0].clientY);
     };
 
-    wire.onmousemove = (e) => moveSlice(e.clientX, e.clientY);
+    wire.onmousemove = (e) => moveSwipe(e.clientX, e.clientY);
     wire.ontouchmove = (e) => {
       if (!e.touches[0]) return;
-      moveSlice(e.touches[0].clientX, e.touches[0].clientY);
+      moveSwipe(e.touches[0].clientX, e.touches[0].clientY);
     };
 
-    wire.onmouseup = endSlice;
-    wire.onmouseleave = endSlice;
-    wire.ontouchend = endSlice;
+    wire.onmouseup = endSwipe;
+    wire.onmouseleave = endSwipe;
+    wire.ontouchend = endSwipe;
   });
 }
 
@@ -317,7 +334,6 @@ function catchGreenRunner(e) {
 function resetBlueStage() {
   clockMinutes = 23 * 60 + 45;
   clockDone = false;
-  clockSwipeAccumulator = 0;
   updateClockReadout();
 
   let active = false;
@@ -355,6 +371,8 @@ function resetBlueStage() {
     active = false;
   };
 
+  digitalClockPanel.classList.remove("done");
+
   digitalClockPanel.onmousedown = (e) => start(e.clientY);
   digitalClockPanel.ontouchstart = (e) => {
     if (!e.touches[0]) return;
@@ -388,33 +406,11 @@ function updateClockReadout() {
 }
 
 /* ---------------- YELLOW MAZE STAGE ---------------- */
-function renderMaze() {
-  if (!mazeGrid) return;
-
-  mazeGrid.innerHTML = "";
-  mazeGrid.style.gridTemplateColumns = `repeat(${MAZE_COLS}, ${CELL_SIZE}px)`;
-  mazeGrid.style.gridTemplateRows = `repeat(${MAZE_ROWS}, ${CELL_SIZE}px)`;
-
-  for (let row = 0; row < MAZE_ROWS; row++) {
-    for (let col = 0; col < MAZE_COLS; col++) {
-      const cell = document.createElement("div");
-      cell.className = mazeMap[row][col] === 1 ? "maze-cell wall" : "maze-cell open";
-      mazeGrid.appendChild(cell);
-    }
-  }
-
-  mazeWrapper.style.width = `${MAZE_COLS * CELL_SIZE}px`;
-  mazeWrapper.style.height = `${MAZE_ROWS * CELL_SIZE}px`;
-
-  mazeEnd.style.left = `${mazeEndCell.col * CELL_SIZE + 2}px`;
-  mazeEnd.style.top = `${mazeEndCell.row * CELL_SIZE + 2}px`;
-}
-
 function resetYellowStage() {
   orbDragging = false;
   orbDone = false;
 
-  setOrbToCellCenter(mazeStartCell.col, mazeStartCell.row);
+  setOrbPosition(mazeStartPoint.x - ORB_RADIUS, mazeStartPoint.y - ORB_RADIUS);
 
   yellowOrb.onmousedown = startOrbDrag;
   yellowOrb.ontouchstart = (e) => {
@@ -422,29 +418,30 @@ function resetYellowStage() {
     startOrbDrag(e.touches[0]);
   };
 
-  document.addEventListener("mousemove", moveOrbDrag);
-  document.addEventListener("mouseup", endOrbDrag);
-  document.addEventListener(
-    "touchmove",
-    (e) => {
-      if (!orbDragging || !e.touches[0]) return;
-      e.preventDefault();
-      moveOrbDrag(e.touches[0]);
-    },
-    { passive: false }
-  );
-  document.addEventListener("touchend", endOrbDrag);
+  document.onmousemove = moveOrbDrag;
+  document.onmouseup = endOrbDrag;
+
+  document.ontouchmove = (e) => {
+    if (!orbDragging || !e.touches[0]) return;
+    e.preventDefault();
+    moveOrbDrag(e.touches[0]);
+  };
+
+  document.ontouchend = endOrbDrag;
+
+  if (mazeEnd) {
+    mazeEnd.style.left = `${mazeEndPoint.x - END_RADIUS}px`;
+    mazeEnd.style.top = `${mazeEndPoint.y - END_RADIUS}px`;
+  }
 }
 
 function initYellowStage() {
   gameStatus.textContent = "Guide the orb through the maze...";
 }
 
-function setOrbToCellCenter(col, row) {
-  const orbSize = 18;
-  const x = col * CELL_SIZE + (CELL_SIZE - orbSize) / 2;
-  const y = row * CELL_SIZE + (CELL_SIZE - orbSize) / 2;
-
+function setOrbPosition(x, y) {
+  orbX = x;
+  orbY = y;
   yellowOrb.style.left = `${x}px`;
   yellowOrb.style.top = `${y}px`;
 }
@@ -464,44 +461,90 @@ function moveOrbDrag(e) {
   if (!orbDragging || orbDone) return;
 
   const wrapperRect = mazeWrapper.getBoundingClientRect();
-  const orbSize = 18;
 
-  let x = e.clientX - wrapperRect.left - orbPointerOffsetX;
-  let y = e.clientY - wrapperRect.top - orbPointerOffsetY;
+  let targetX = e.clientX - wrapperRect.left - orbPointerOffsetX;
+  let targetY = e.clientY - wrapperRect.top - orbPointerOffsetY;
 
-  x = Math.max(0, Math.min(wrapperRect.width - orbSize, x));
-  y = Math.max(0, Math.min(wrapperRect.height - orbSize, y));
+  targetX = clamp(targetX, 0, wrapperRect.width - ORB_SIZE);
+  targetY = clamp(targetY, 0, wrapperRect.height - ORB_SIZE);
 
-  const centerX = x + orbSize / 2;
-  const centerY = y + orbSize / 2;
+  // Move in small steps so the orb stops at walls instead of jumping through them
+  const dx = targetX - orbX;
+  const dy = targetY - orbY;
+  const distance = Math.hypot(dx, dy);
+  const steps = Math.max(1, Math.ceil(distance / 3));
 
-  const col = Math.floor(centerX / CELL_SIZE);
-  const row = Math.floor(centerY / CELL_SIZE);
+  let nextX = orbX;
+  let nextY = orbY;
 
-  if (isOpenCell(col, row)) {
-    yellowOrb.style.left = `${x}px`;
-    yellowOrb.style.top = `${y}px`;
-    checkMazeEnd(col, row);
+  for (let i = 1; i <= steps; i++) {
+    const stepX = orbX + (dx * i) / steps;
+    const stepY = orbY + (dy * i) / steps;
+
+    if (canPlaceOrb(stepX, nextY)) {
+      nextX = stepX;
+    }
+
+    if (canPlaceOrb(nextX, stepY)) {
+      nextY = stepY;
+    }
   }
+
+  setOrbPosition(nextX, nextY);
+  checkMazeEnd();
 }
 
 function endOrbDrag() {
   orbDragging = false;
 }
 
-function isOpenCell(col, row) {
-  if (row < 0 || row >= MAZE_ROWS || col < 0 || col >= MAZE_COLS) return false;
-  return mazeMap[row][col] === 0;
+function canPlaceOrb(x, y) {
+  const centerX = x + ORB_RADIUS;
+  const centerY = y + ORB_RADIUS;
+
+  for (const wall of mazeWalls) {
+    const dist = distancePointToSegment(centerX, centerY, wall.x1, wall.y1, wall.x2, wall.y2);
+    if (dist < COLLISION_BUFFER) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
-function checkMazeEnd(col, row) {
+function checkMazeEnd() {
   if (orbDone) return;
 
-  if (col === mazeEndCell.col && row === mazeEndCell.row) {
+  const centerX = orbX + ORB_RADIUS;
+  const centerY = orbY + ORB_RADIUS;
+  const dist = Math.hypot(centerX - mazeEndPoint.x, centerY - mazeEndPoint.y);
+
+  if (dist <= END_RADIUS) {
     orbDone = true;
     gameStatus.textContent = "You reached the end.";
     revealInviteWithSmoke("yellow");
   }
+}
+
+function distancePointToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  if (dx === 0 && dy === 0) {
+    return Math.hypot(px - x1, py - y1);
+  }
+
+  const t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+  const clampedT = Math.max(0, Math.min(1, t));
+
+  const nearestX = x1 + clampedT * dx;
+  const nearestY = y1 + clampedT * dy;
+
+  return Math.hypot(px - nearestX, py - nearestY);
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }
 
 /* ---------------- REVEAL ---------------- */
