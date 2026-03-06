@@ -20,10 +20,6 @@ const runnerArea = document.getElementById("runnerArea");
 const digitalClockPanel = document.getElementById("digitalClockPanel");
 const digitalClockReadout = document.getElementById("digitalClockReadout");
 
-const yellowOrb = document.getElementById("yellowOrb");
-const mazeWrapper = document.getElementById("mazeWrapper");
-const mazeEnd = document.getElementById("mazeEnd");
-
 const colorSmokeOverlay = document.getElementById("colorSmokeOverlay");
 
 let bombCountdown = 30;
@@ -38,53 +34,7 @@ let runnerCaught = false;
 let clockMinutes = 23 * 60 + 45;
 let clockDone = false;
 let clockSwipeStartY = 0;
-
-let orbDragging = false;
-let orbDone = false;
-let orbPointerOffsetX = 0;
-let orbPointerOffsetY = 0;
-let orbX = 0;
-let orbY = 0;
-
-const ORB_SIZE = 18;
-const ORB_RADIUS = ORB_SIZE / 2;
-
-/* MAZE WALLS based on uploaded reference image */
-const mazeWalls = [
-  // outer border
-  { x1: 30, y1: 20, x2: 30, y2: 290 },
-  { x1: 30, y1: 290, x2: 350, y2: 290 },
-  { x1: 350, y1: 290, x2: 350, y2: 20 },
-  { x1: 30, y1: 20, x2: 120, y2: 20 },
-  { x1: 165, y1: 20, x2: 350, y2: 20 },
-
-  // inner walls
-  { x1: 120, y1: 20, x2: 120, y2: 105 },
-  { x1: 75, y1: 60, x2: 75, y2: 145 },
-  { x1: 120, y1: 60, x2: 245, y2: 60 },
-  { x1: 165, y1: 60, x2: 165, y2: 195 },
-  { x1: 215, y1: 105, x2: 215, y2: 145 },
-  { x1: 305, y1: 20, x2: 305, y2: 145 },
-  { x1: 305, y1: 60, x2: 350, y2: 60 },
-  { x1: 305, y1: 105, x2: 350, y2: 105 },
-  { x1: 215, y1: 145, x2: 350, y2: 145 },
-  { x1: 30, y1: 145, x2: 120, y2: 145 },
-  { x1: 165, y1: 195, x2: 260, y2: 195 },
-  { x1: 75, y1: 195, x2: 75, y2: 235 },
-  { x1: 30, y1: 235, x2: 75, y2: 235 },
-  { x1: 120, y1: 195, x2: 120, y2: 235 },
-  { x1: 260, y1: 195, x2: 260, y2: 235 },
-  { x1: 215, y1: 235, x2: 260, y2: 235 },
-  { x1: 305, y1: 195, x2: 305, y2: 235 },
-  { x1: 120, y1: 235, x2: 120, y2: 290 },
-  { x1: 215, y1: 235, x2: 215, y2: 290 }
-];
-
-const mazeStartPoint = { x: 45, y: 170 };
-const mazeEndPoint = { x: 333, y: 45 };
-const END_RADIUS = 18;
-const WALL_THICKNESS = 10;
-const COLLISION_BUFFER = ORB_RADIUS + WALL_THICKNESS / 2 - 1;
+let clockSwipeAccumulator = 0;
 
 startBtn?.addEventListener("click", () => {
   showOnlyPage(1);
@@ -108,7 +58,6 @@ function initGame() {
   resetBombStage();
   resetGreenStage();
   resetBlueStage();
-  resetYellowStage();
 
   showStage("bomb");
 
@@ -118,13 +67,12 @@ function initGame() {
 
 function showStage(stageName) {
   [bombStage, greenStage, blueStage, yellowStage].forEach((stage) => {
-    stage.classList.remove("active");
+    if (stage) stage.classList.remove("active");
   });
 
-  if (stageName === "bomb") bombStage.classList.add("active");
-  if (stageName === "green") greenStage.classList.add("active");
-  if (stageName === "blue") blueStage.classList.add("active");
-  if (stageName === "yellow") yellowStage.classList.add("active");
+  if (stageName === "bomb" && bombStage) bombStage.classList.add("active");
+  if (stageName === "green" && greenStage) greenStage.classList.add("active");
+  if (stageName === "blue" && blueStage) blueStage.classList.add("active");
 }
 
 /* ---------------- BOMB STAGE ---------------- */
@@ -140,7 +88,7 @@ function resetBombStage() {
     wire.style.pointerEvents = "auto";
   });
 
-  setupWireSwipes();
+  setupWireSlicing();
   startBombCountdown();
 }
 
@@ -166,51 +114,51 @@ function stopBombCountdown() {
   }
 }
 
-function setupWireSwipes() {
+function setupWireSlicing() {
   wireLines.forEach((wire) => {
     let startX = 0;
     let startY = 0;
-    let active = false;
+    let slicing = false;
 
-    const startSwipe = (clientX, clientY) => {
+    const startSlice = (clientX, clientY) => {
       if (missionLocked) return;
-      active = true;
+      slicing = true;
       startX = clientX;
       startY = clientY;
     };
 
-    const moveSwipe = (clientX, clientY) => {
-      if (!active || missionLocked) return;
+    const moveSlice = (clientX, clientY) => {
+      if (!slicing || missionLocked) return;
 
       const dx = clientX - startX;
       const dy = clientY - startY;
 
-      // require a strong vertical swipe on the chosen wire
+      /* vertical swipe on the chosen wire */
       if (Math.abs(dy) > 55 && Math.abs(dy) > Math.abs(dx) * 1.2) {
-        active = false;
+        slicing = false;
         cutWire(wire.dataset.wire, wire);
       }
     };
 
-    const endSwipe = () => {
-      active = false;
+    const endSlice = () => {
+      slicing = false;
     };
 
-    wire.onmousedown = (e) => startSwipe(e.clientX, e.clientY);
+    wire.onmousedown = (e) => startSlice(e.clientX, e.clientY);
     wire.ontouchstart = (e) => {
       if (!e.touches[0]) return;
-      startSwipe(e.touches[0].clientX, e.touches[0].clientY);
+      startSlice(e.touches[0].clientX, e.touches[0].clientY);
     };
 
-    wire.onmousemove = (e) => moveSwipe(e.clientX, e.clientY);
+    wire.onmousemove = (e) => moveSlice(e.clientX, e.clientY);
     wire.ontouchmove = (e) => {
       if (!e.touches[0]) return;
-      moveSwipe(e.touches[0].clientX, e.touches[0].clientY);
+      moveSlice(e.touches[0].clientX, e.touches[0].clientY);
     };
 
-    wire.onmouseup = endSwipe;
-    wire.onmouseleave = endSwipe;
-    wire.ontouchend = endSwipe;
+    wire.onmouseup = endSlice;
+    wire.onmouseleave = endSlice;
+    wire.ontouchend = endSlice;
   });
 }
 
@@ -222,7 +170,8 @@ function cutWire(color, wireEl) {
   wireEl.classList.add("cut");
   wireLines.forEach((w) => (w.style.pointerEvents = "none"));
 
-  if (color === "red") {
+  /* red and yellow now both fail */
+  if (color === "red" || color === "yellow") {
     explodeBombAndRetry("Wrong wire...");
     return;
   }
@@ -242,15 +191,6 @@ function cutWire(color, wireEl) {
     setTimeout(() => {
       showStage("blue");
       initBlueStage();
-    }, 450);
-  }
-
-  if (color === "yellow") {
-    gameHint.textContent = "Guide the orb to the end";
-    gameStatus.textContent = "Stay inside the maze...";
-    setTimeout(() => {
-      showStage("yellow");
-      initYellowStage();
     }, 450);
   }
 }
@@ -280,8 +220,10 @@ function resetGreenStage() {
     greenRunner.classList.remove("caught");
   }
 
-  greenRunner.onclick = catchGreenRunner;
-  greenRunner.ontouchstart = catchGreenRunner;
+  if (greenRunner) {
+    greenRunner.onclick = catchGreenRunner;
+    greenRunner.ontouchstart = catchGreenRunner;
+  }
 }
 
 function initGreenStage() {
@@ -334,6 +276,7 @@ function catchGreenRunner(e) {
 function resetBlueStage() {
   clockMinutes = 23 * 60 + 45;
   clockDone = false;
+  clockSwipeAccumulator = 0;
   updateClockReadout();
 
   let active = false;
@@ -371,6 +314,8 @@ function resetBlueStage() {
     active = false;
   };
 
+  if (!digitalClockPanel) return;
+
   digitalClockPanel.classList.remove("done");
 
   digitalClockPanel.onmousedown = (e) => start(e.clientY);
@@ -395,6 +340,8 @@ function initBlueStage() {
 }
 
 function updateClockReadout() {
+  if (!digitalClockReadout) return;
+
   const normalized = clockMinutes % (24 * 60);
   const hours = Math.floor(normalized / 60);
   const mins = normalized % 60;
@@ -403,148 +350,6 @@ function updateClockReadout() {
   const mm = String(mins).padStart(2, "0");
 
   digitalClockReadout.textContent = `${hh}:${mm}`;
-}
-
-/* ---------------- YELLOW MAZE STAGE ---------------- */
-function resetYellowStage() {
-  orbDragging = false;
-  orbDone = false;
-
-  setOrbPosition(mazeStartPoint.x - ORB_RADIUS, mazeStartPoint.y - ORB_RADIUS);
-
-  yellowOrb.onmousedown = startOrbDrag;
-  yellowOrb.ontouchstart = (e) => {
-    if (!e.touches[0]) return;
-    startOrbDrag(e.touches[0]);
-  };
-
-  document.onmousemove = moveOrbDrag;
-  document.onmouseup = endOrbDrag;
-
-  document.ontouchmove = (e) => {
-    if (!orbDragging || !e.touches[0]) return;
-    e.preventDefault();
-    moveOrbDrag(e.touches[0]);
-  };
-
-  document.ontouchend = endOrbDrag;
-
-  if (mazeEnd) {
-    mazeEnd.style.left = `${mazeEndPoint.x - END_RADIUS}px`;
-    mazeEnd.style.top = `${mazeEndPoint.y - END_RADIUS}px`;
-  }
-}
-
-function initYellowStage() {
-  gameStatus.textContent = "Guide the orb through the maze...";
-}
-
-function setOrbPosition(x, y) {
-  orbX = x;
-  orbY = y;
-  yellowOrb.style.left = `${x}px`;
-  yellowOrb.style.top = `${y}px`;
-}
-
-function startOrbDrag(e) {
-  if (orbDone) return;
-
-  orbDragging = true;
-  const orbRect = yellowOrb.getBoundingClientRect();
-  orbPointerOffsetX = e.clientX - orbRect.left;
-  orbPointerOffsetY = e.clientY - orbRect.top;
-
-  if (e.preventDefault) e.preventDefault();
-}
-
-function moveOrbDrag(e) {
-  if (!orbDragging || orbDone) return;
-
-  const wrapperRect = mazeWrapper.getBoundingClientRect();
-
-  let targetX = e.clientX - wrapperRect.left - orbPointerOffsetX;
-  let targetY = e.clientY - wrapperRect.top - orbPointerOffsetY;
-
-  targetX = clamp(targetX, 0, wrapperRect.width - ORB_SIZE);
-  targetY = clamp(targetY, 0, wrapperRect.height - ORB_SIZE);
-
-  // Move in small steps so the orb stops at walls instead of jumping through them
-  const dx = targetX - orbX;
-  const dy = targetY - orbY;
-  const distance = Math.hypot(dx, dy);
-  const steps = Math.max(1, Math.ceil(distance / 3));
-
-  let nextX = orbX;
-  let nextY = orbY;
-
-  for (let i = 1; i <= steps; i++) {
-    const stepX = orbX + (dx * i) / steps;
-    const stepY = orbY + (dy * i) / steps;
-
-    if (canPlaceOrb(stepX, nextY)) {
-      nextX = stepX;
-    }
-
-    if (canPlaceOrb(nextX, stepY)) {
-      nextY = stepY;
-    }
-  }
-
-  setOrbPosition(nextX, nextY);
-  checkMazeEnd();
-}
-
-function endOrbDrag() {
-  orbDragging = false;
-}
-
-function canPlaceOrb(x, y) {
-  const centerX = x + ORB_RADIUS;
-  const centerY = y + ORB_RADIUS;
-
-  for (const wall of mazeWalls) {
-    const dist = distancePointToSegment(centerX, centerY, wall.x1, wall.y1, wall.x2, wall.y2);
-    if (dist < COLLISION_BUFFER) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function checkMazeEnd() {
-  if (orbDone) return;
-
-  const centerX = orbX + ORB_RADIUS;
-  const centerY = orbY + ORB_RADIUS;
-  const dist = Math.hypot(centerX - mazeEndPoint.x, centerY - mazeEndPoint.y);
-
-  if (dist <= END_RADIUS) {
-    orbDone = true;
-    gameStatus.textContent = "You reached the end.";
-    revealInviteWithSmoke("yellow");
-  }
-}
-
-function distancePointToSegment(px, py, x1, y1, x2, y2) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-
-  if (dx === 0 && dy === 0) {
-    return Math.hypot(px - x1, py - y1);
-  }
-
-  const t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
-  const clampedT = Math.max(0, Math.min(1, t));
-
-  const nearestX = x1 + clampedT * dx;
-  const nearestY = y1 + clampedT * dy;
-
-  return Math.hypot(px - nearestX, py - nearestY);
-}
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
 }
 
 /* ---------------- REVEAL ---------------- */
