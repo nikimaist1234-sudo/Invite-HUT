@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>X'O Nights - Nikita Turns 21</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body class="locked">
+
+  <!-- PAGE 0 -->
+  <section id="page0" class="page active volume-page">
+    <div class="overlay volume-overlay">
+      <h1 class="big-title">Please turn your volume up</h1>
+      <h2>for a full experience 🔊</h2>
+      <button class="primary" id="startBtn">I'm ready</button>
+    </div>
+  </section>
+
+  <!-- PAGE 1 -->
+  <section id="page1" class="page">
+    <div class="overlay mission-overlay">
+      <h1 class="big-title">You're Invited</h1>
+      <h2>X'O Nights: Nikita Turns 21</h2>
+
+      <div class="mission-game">
+        <p class="game-hint" id="gameHint">Choose carefully...</p>
+
+        <div class="game-stage" id="gameStage">
+
+          <!-- STAGE 1: BOMB -->
+          <div class="stage-screen active" id="bombStage">
+            <div class="bomb-timer" id="bombTimer">30</div>
+
+            <div class="bomb-shell" id="bombShell">
+              <div class="bomb-cap"></div>
+              <div class="bomb-spark"></div>
+            </div>
+
+            <div class="wire-board">
+              <div class="wire-row">
+                <button class="wire-btn red-wire" data-wire="red">Red Wire</button>
+              </div>
+              <div class="wire-row">
+                <button class="wire-btn green-wire" data-wire="green">Green Wire</button>
+              </div>
+              <div class="wire-row">
+                <button class="wire-btn blue-wire" data-wire="blue">Blue Wire</button>
+              </div>
+              <div class="wire-row">
+                <button class="wire-btn yellow-wire" data-wire="yellow">Yellow Wire</button>
+              </div>
+            </div>
+
+            <div class="explosion-flash" id="explosionFlash"></div>
+          </div>
+
+          <!-- STAGE 2A: GREEN RUNNER -->
+          <div class="stage-screen" id="greenStage">
+            <div class="runner-instructions">Catch the figure</div>
+            <div class="runner-area" id="runnerArea">
+              <div class="green-runner" id="greenRunner"></div>
+            </div>
+          </div>
+
+          <!-- STAGE 2B: BLUE TIMELINE -->
+          <div class="stage-screen" id="blueStage">
+            <div class="timeline-title">Drag the line to tomorrow</div>
+            <div class="timeline-track" id="timelineTrack">
+              <div class="timeline-glow"></div>
+              <div class="timeline-fill" id="timelineFill"></div>
+              <div class="timeline-marker today-marker">Today</div>
+              <div class="timeline-marker tomorrow-marker">Tomorrow</div>
+              <div class="timeline-handle" id="timelineHandle"></div>
+            </div>
+          </div>
+
+          <!-- STAGE 2C: YELLOW MAZE -->
+          <div class="stage-screen" id="yellowStage">
+            <div class="maze-title">Guide the orb to the end</div>
+
+            <div class="maze-wrapper">
+              <svg class="maze-svg" viewBox="0 0 320 420" preserveAspectRatio="none">
+                <path class="maze-wall"
+                  d="M20 20 H300 V90 H180 V140 H280 V210 H120 V260 H220 V330 H70 V400 H300" />
+                <path class="maze-wall"
+                  d="M20 70 H130 V120 H40 V190 H210 V240 H70 V300 H170 V350 H20" />
+              </svg>
+
+              <div class="maze-start">START</div>
+              <div class="maze-end" id="mazeEnd">END</div>
+              <div class="yellow-orb" id="yellowOrb"></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="game-status" id="gameStatus">A ticking choice waits for you...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section id="page2" class="page light-page">
+    <div class="two-column">
+      <div class="left">
+        <img src="showup.jpg" alt="Event Image">
+      </div>
+
+      <div class="right text-left">
+        <h1>Show up!</h1>
+        <p><strong>Date:</strong> Saturday, 23rd May 2026</p>
+        <p><strong>Time:</strong> 16:00 for 16:30</p>
+        <p><strong>Address:</strong> 31 Swart Street, Randpark Ridge</p>
+        <p class="big-line"><strong>BOYB 🍾</strong></p>
+        <br>
+        <p><strong>Scroll for more Information</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 3 -->
+  <section id="page3" class="page light-page dress-layout">
+    <div class="two-column">
+      <div class="left">
+        <img src="HUT.jpg" alt="Hurry Up Tomorrow">
+        <p class="tagline"><strong>The future is calling—hurry up</strong></p>
+      </div>
+
+      <div class="right text-left dress-copy">
+        <h1 class="dress-title">Dress Code</h1>
+
+        <div class="highlight-box">
+          You have been chosen to represent <strong>Hurry Up Tomorrow</strong>
+        </div>
+
+        <ul class="dress-list">
+          <li>Tomorrow begins with my ladies—Come dressed in white</li>
+          <li>Gentlemen carry the dawn—Come dressed in cream</li>
+          <li>Casual, Comfort over beauty</li>
+        </ul>
+
+        <p class="dress-note">
+          <strong>Note:</strong> Your t-shirt/dress(ladies) should represent the dress code. Having your bottoms/pants represent the dress code is not accepted. Please and thank you
+        </p>
+
+        <br><br>
+
+        <p class="keep-scrolling"><strong>Keep scrolling, I'm not done yet :D</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 4 -->
+  <section id="page4" class="page light-page contact-layout">
+    <div class="contact-box text-left">
+      <h1 class="big-contact">Contact Details</h1>
+      <p>Contact Nikita(Me) for more information.</p>
+      <p>If you don't want to contact me, contact my mother,Koshnee, for more information.</p>
+
+      <br>
+
+      <p><strong>Phone number:</strong> 0813270172</p>
+      <p><strong>Koshnee's Number:</strong> 0832269234</p>
+    </div>
+
+    <footer class="dark-footer">
+      XO till we overdose
+    </footer>
+  </section>
+
+  <!-- COLORED SMOKE -->
+  <div class="color-smoke-overlay" id="colorSmokeOverlay">
+    <div class="smoke-cloud smoke-a"></div>
+    <div class="smoke-cloud smoke-b"></div>
+    <div class="smoke-cloud smoke-c"></div>
+    <div class="smoke-cloud smoke-d"></div>
+  </div>
+
+  <!-- MUSIC -->
+  <audio id="bgMusic" src="SaoPaulo.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
