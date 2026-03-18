@@ -599,8 +599,10 @@ body.launch-reveal #page1 {
   margin-top: 12px;
 }
 
+/* CHANGE 1: Dress Code slightly bigger */
 .dress-title {
-  font-size: 2.2rem;
+  font-size: 2.6rem;
+  margin-bottom: 12px;
 }
 
 .dress-copy {
@@ -639,9 +641,19 @@ body.launch-reveal #page1 {
   font-size: 1rem;
 }
 
+/* PAGE 4 LAYOUT */
 .contact-layout {
   justify-content: space-between;
   padding-bottom: 0;
+}
+
+.page4-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 18px;
+  width: 100%;
 }
 
 .contact-box {
@@ -654,9 +666,65 @@ body.launch-reveal #page1 {
   margin-bottom: 14px;
 }
 
-.contact-box p {
-  margin-bottom: 10px;
-  line-height: 1.5;
+.contact-line {
+  display: grid;
+  grid-template-columns: auto 14px 1fr;
+  column-gap: 8px;
+  align-items: baseline;
+  margin: 10px 0;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.contact-line .label {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.contact-line .colon {
+  font-weight: 800;
+}
+
+.contact-line .value {
+  font-weight: 400;
+}
+
+/* QUIZ BOX ON PAGE 4 */
+.quiz-box {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.15);
+  text-align: left;
+}
+
+.quiz-box-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.quiz-box-sub {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.quiz-open-btn {
+  background: black;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: 0.3s ease;
+}
+
+.quiz-open-btn:hover {
+  background: #333;
 }
 
 button.primary {
@@ -720,6 +788,229 @@ body.scroll-mode #page4 {
 
 body.scroll-mode #page4 {
   padding-bottom: 0;
+  flex-direction: column;
+}
+
+/* QUIZ SCREEN */
+body.quiz-open {
+  overflow: hidden !important;
+}
+
+.quiz-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  background: rgba(120,120,120,0.92);
+  backdrop-filter: blur(8px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 0;
+}
+
+body.quiz-open .quiz-screen {
+  display: flex;
+}
+
+.quiz-inner {
+  width: min(780px, 92vw);
+  margin: 0 auto;
+  position: relative;
+  padding: 18px 0 60px;
+}
+
+.quiz-back-btn {
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  font-size: 14px;
+}
+
+.quiz-title {
+  font-size: 26px;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.25);
+}
+
+.quiz-subtitle {
+  opacity: 0.9;
+  margin-bottom: 18px;
+  color: #fff;
+}
+
+.quiz-form {
+  display: grid;
+  gap: 14px;
+}
+
+.quiz-q {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.quiz-q h3 {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #fff;
+}
+
+.quiz-name {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(0,0,0,0.15);
+  color: #fff;
+  outline: none;
+  font-size: 16px;
+}
+
+.quiz-name::placeholder {
+  color: rgba(255,255,255,0.75);
+}
+
+.quiz-q label {
+  display: block;
+  padding: 10px 10px;
+  margin: 8px 0;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.18);
+  cursor: pointer;
+  user-select: none;
+  color: rgba(255,255,255,0.95);
+  transition: all 0.2s ease;
+}
+
+.quiz-q label:hover {
+  background: rgba(0,0,0,0.25);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.quiz-q input[type="radio"] {
+  margin-right: 10px;
+  transform: translateY(1px);
+}
+
+.quiz-finish-btn {
+  margin-top: 4px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.24);
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.quiz-finish-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.quiz-finish-btn:active {
+  transform: scale(0.99);
+}
+
+.quiz-result {
+  display: none;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(0,0,0,0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-result-inner h2 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.quiz-result-inner h2 span {
+  color: #7fd1ff;
+  text-shadow: 0 0 10px rgba(127, 209, 255, 0.5);
+}
+
+.fade-soft {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.fade-soft.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.result-cover {
+  width: min(360px, 86vw);
+  margin-top: 14px;
+  border-radius: 18px;
+  display: none;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.result-cover.show {
+  display: block;
+}
+
+.result-blurb {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.95);
+  opacity: 0.95;
+  font-style: italic;
+}
+
+.quiz-result-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.quiz-retry-btn,
+.quiz-close-btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.quiz-retry-btn:hover,
+.quiz-close-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.quiz-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.18), rgba(0,0,0,0.0) 60%);
+  transition: opacity 0.5s ease;
+}
+
+.quiz-overlay.on {
+  opacity: 1;
 }
 
 /* MOBILE */
@@ -760,11 +1051,30 @@ body.scroll-mode #page4 {
     font-size: 2.2rem;
   }
 
+  /* CHANGE 1: Mobile dress title */
   .dress-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .dress-copy {
     font-size: 0.9rem;
+  }
+
+  .quiz-title {
+    font-size: 22px;
+  }
+
+  .quiz-q {
+    padding: 14px;
+  }
+
+  .quiz-q label {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .contact-line {
+    font-size: 16px;
+    grid-template-columns: auto 12px 1fr;
   }
 }
