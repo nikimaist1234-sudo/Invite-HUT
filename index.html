@@ -113,6 +113,7 @@
     </div>
   </div>
 </section>
+
   <!-- PAGE 2 -->
   <section id="page2" class="page light-page">
     <div class="two-column">
@@ -137,7 +138,7 @@
     <div class="two-column">
       <div class="left">
         <img src="HUT.jpg" alt="Hurry Up Tomorrow">
-        <p class="tagline"><strong>The future is calling—hurry up</strong></p>
+        <p class="tagline"><strong>The future is calling — hurry up</strong></p>
       </div>
 
       <div class="right text-left dress-copy">
@@ -148,36 +149,157 @@
         </div>
 
         <ul class="dress-list">
-          <li>Tomorrow begins with my ladies—Come dressed in white</li>
-          <li>Gentlemen carry the dawn—Come dressed in cream</li>
+          <li>Tomorrow begins with my ladies — Come dressed in White</li>
+          <li>Gentlemen carry the dawn — Come dressed in Cream</li>
           <li>Casual, Comfort over beauty</li>
         </ul>
 
         <p class="dress-note">
-          <strong>Note:</strong> Your t-shirt/dress(ladies) should represent the dress code. Having your bottoms/pants represent the dress code is not accepted. Please and thank you
+          <strong> Kindly Note:</strong> The dress code should be represented by your top (t-shirt or dress). Bottoms/pants alone will not meet the requirement. Thank you for understanding.
         </p>
 
         <br><br>
 
-        <p class="keep-scrolling"><strong>Keep scrolling, I'm not done yet :D</strong></p>
+        <p class="keep-scrolling"><strong>Keep scrolling, I'm not done yet😝</strong></p>
       </div>
     </div>
   </section>
 
   <!-- PAGE 4 -->
   <section id="page4" class="page light-page contact-layout">
-    <div class="contact-box text-left">
-      <h1 class="big-contact">Contact Details</h1>
-      <p>Contact Nikita(Me) for more information.</p>
-      <p>If you don't want to contact me, contact my mother,Koshnee, for more information.</p>
-      <br>
-      <p><strong>Phone number:</strong> 0813270172</p>
-      <p><strong>Koshnee's Number:</strong> 0832269234</p>
+    <div class="page4-content">
+      <div class="two-column">
+        <div class="left text-left">
+          <h1 class="big-contact">Contact Details</h1>
+          <p>Contact Nikita for more information.If you don't want to contact me</p>
+          <p>Contact my mother-Koshnee for more information.</p>
+          
+          <br>
+          
+          <p class="contact-line">
+            <span class="label">Phone Number:</span>
+            <span class="value">0813270172</span>
+          </p>
+          <p class="contact-line">
+            <span class="label">Koshnee's Number:</span>
+            <span class="value">0832269234</span>
+          </p>
+          <p class="contact-line">
+            <span class="label">RSVP:</span>
+            <span class="value">There is none, you have to come😉</span>
+          </p>
+          
+          <br><br>
+          
+          <!-- QUIZ BOX -->
+          <div class="quiz-box">
+            <p class="quiz-box-title">Find out what song you are from Hurry Up Tomorrow</p>
+            <p class="quiz-box-sub">Participate if you want.</p>
+            <button class="quiz-open-btn" id="openQuizBtn">Click to play</button>
+          </div>
+        </div>
+
+        <div class="right text-left">
+          <!-- Empty right side for layout balance -->
+        </div>
+      </div>
     </div>
 
     <footer class="dark-footer">
       XO till we overdose
     </footer>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section id="pageQuiz" class="quiz-screen" aria-hidden="true">
+    <div class="quiz-inner">
+      <button class="quiz-back-btn" id="quizBackBtn">← Back to Invite</button>
+      
+      <h1 class="quiz-title">Which Hurry Up Tomorrow song are you?</h1>
+      <p class="quiz-subtitle">6 quick picks, soft reveal</p>
+      
+      <form class="quiz-form" id="quizForm">
+        <!-- Name Input -->
+        <div class="quiz-q">
+          <input type="text" class="quiz-name" id="guestName" placeholder="Enter your name" required>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="quiz-q">
+          <h3>1. If you had to pick one guilty-pleasure snack at midnight, what is it?</h3>
+          <label><input type="radio" name="q1" value="cry-for-me"> Chips/something spicy</label>
+          <label><input type="radio" name="q1" value="niagara-falls"> Ice cream staight from the tub</label>
+          <label><input type="radio" name="q1" value="the-abyss"> Chocolate/Sweets</label>
+          <label><input type="radio" name="q1" value="timeless"> Pancakes/Waffels</label>
+          <label><input type="radio" name="q1" value="wake-me-up"> None of the above...I'm 'trying' to be healthy</label>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="quiz-q">
+          <h3>2. Which language would you love to learn just for fun?</h3>
+          <label><input type="radio" name="q2" value="wake-me-up"> French</label>
+          <label><input type="radio" name="q2" value="timeless"> Spanish</label>
+          <label><input type="radio" name="q2" value="the-abyss"> Italian</label>
+          <label><input type="radio" name="q2" value="niagara-falls"> Japanese</label>
+          <label><input type="radio" name="q2" value="cry-for-me"> Portugese</label>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="quiz-q">
+          <h3>3. What's your love language?</h3>
+          <label><input type="radio" name="q3" value="timeless"> Quality time, forever</label>
+          <label><input type="radio" name="q3" value="the-abyss"> Words of affirmation, raw and real</label>
+          <label><input type="radio" name="q3" value="cry-for-me"> Acts of service, even when it hurts</label>
+          <label><input type="radio" name="q3" value="niagara-falls"> Physical touch, distant but close</label>
+          <label><input type="radio" name="q3" value="wake-me-up"> Gifts, trying to buy happiness</label>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="quiz-q">
+          <h3>4. Pick a setting:</h3>
+          <label><input type="radio" name="q4" value="niagara-falls"> A rainy city skyline</label>
+          <label><input type="radio" name="q4" value="wake-me-up"> A sleepless night in neon lights</label>
+          <label><input type="radio" name="q4" value="timeless"> A sunset that never ends</label>
+          <label><input type="radio" name="q4" value="the-abyss"> An empty room with heavy silence</label>
+          <label><input type="radio" name="q4" value="cry-for-me"> A car parked by the ocean</label>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="quiz-q">
+          <h3>5. Pick a genre of music</h3>
+          <label><input type="radio" name="q5" value="the-abyss"> R&B</label>
+          <label><input type="radio" name="q5" value="timeless"> Rap</label>
+          <label><input type="radio" name="q5" value="cry-for-me"> Pop</label>
+          <label><input type="radio" name="q5" value="wake-me-up"> Amapiano</label>
+          <label><input type="radio" name="q5" value="niagara-falls"> 80's and 90's</label>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="quiz-q">
+          <h3>6. Pick a Hurry Up Tomorrow lyric:</h3>
+          <label><input type="radio" name="q6" value="cry-for-me"> "Cause I tried with you, saw my life with you"</label>
+          <label><input type="radio" name="q6" value="niagara-falls"> "I wouldn't let love inside"</label>
+          <label><input type="radio" name="q6" value="the-abyss"> "You know my heart belongs to you"</label>
+          <label><input type="radio" name="q6" value="timeless"> "We would be timeless"</label>
+          <label><input type="radio" name="q6" value="wake-me-up"> "Cause I fear your love's my delusion"</label>
+        </div>
+
+        <button type="button" class="quiz-finish-btn" id="quizFinishBtn">Reveal my song</button>
+      </form>
+
+      <!-- RESULT -->
+      <div class="quiz-result" id="quizResult">
+        <div class="quiz-result-inner fade-soft" id="quizResultInner"></div>
+        <img class="result-cover" id="resultCover" alt="Song Cover">
+        <p class="result-blurb" id="resultBlurb"></p>
+        <div class="quiz-result-actions">
+          <button class="quiz-retry-btn" id="quizRetryBtn">Try again</button>
+          <button class="quiz-close-btn" id="quizCloseBtn">Back to Invite</button>
+        </div>
+      </div>
+
+      <div class="quiz-overlay" id="quizOverlay"></div>
+    </div>
   </section>
 
   <!-- COLORED SMOKE -->
@@ -190,6 +312,7 @@
 
   <!-- MUSIC -->
   <audio id="bgMusic" src="SaoPaulo.mp3" preload="auto"></audio>
+  <audio id="resultAudio" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
