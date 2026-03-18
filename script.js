@@ -1,5 +1,6 @@
 const startBtn = document.getElementById("startBtn");
 const music = document.getElementById("bgMusic");
+const resultAudio = document.getElementById("resultAudio");
 
 const gameHint = document.getElementById("gameHint");
 const gameStatus = document.getElementById("gameStatus");
@@ -21,6 +22,22 @@ const digitalClockReadout = document.getElementById("digitalClockReadout");
 
 const colorSmokeOverlay = document.getElementById("colorSmokeOverlay");
 
+// Quiz elements
+const openQuizBtn = document.getElementById("openQuizBtn");
+const quizBackBtn = document.getElementById("quizBackBtn");
+const quizCloseBtn = document.getElementById("quizCloseBtn");
+const quizFinishBtn = document.getElementById("quizFinishBtn");
+const quizRetryBtn = document.getElementById("quizRetryBtn");
+
+const quizScreen = document.getElementById("pageQuiz");
+const quizForm = document.getElementById("quizForm");
+const quizResult = document.getElementById("quizResult");
+const quizResultInner = document.getElementById("quizResultInner");
+const quizOverlay = document.getElementById("quizOverlay");
+const resultCover = document.getElementById("resultCover");
+const resultBlurb = document.getElementById("resultBlurb");
+const guestNameInput = document.getElementById("guestName");
+
 let bombCountdown = 30;
 let bombInterval = null;
 let missionLocked = false;
@@ -33,6 +50,36 @@ let runnerCaught = false;
 let clockMinutes = 23 * 60 + 45;
 let clockDone = false;
 let clockSwipeStartY = 0;
+
+// Quiz state
+let _inviteWasPlaying = false;
+let _inviteTime = 0;
+let _scrollYBeforeQuiz = 0;
+
+// Song data
+const SONG_KEYS = [
+  "cry-for-me",
+  "niagara-falls",
+  "the-abyss",
+  "timeless",
+  "wake-me-up"
+];
+
+const SONG_PRETTY = {
+  "cry-for-me": "Cry For Me",
+  "niagara-falls": "Niagara Falls",
+  "the-abyss": "The Abyss",
+  "timeless": "Timeless",
+  "wake-me-up": "Wake Me Up"
+};
+
+const SONG_BLURB = {
+  "cry-for-me": "You're the main character. Melancholic, dramatic, and unafraid to feel everything. From Hurry Up Tomorrow.",
+  "niagara-falls": "Elegant and mysterious. You keep your heart guarded but your presence is unforgettable. From Hurry Up Tomorrow.",
+  "the-abyss": "Deep and introspective. You crave real connection and aren't afraid of the darkness. From Hurry Up Tomorrow.",
+  "timeless": "Hopelessly romantic. You believe in forever and love that transcends time. From Hurry Up Tomorrow.",
+  "wake-me-up": "Restless dreamer. Caught between reality and illusion, searching for truth. From Hurry Up Tomorrow."
+};
 
 startBtn?.addEventListener("click", () => {
   showOnlyPage(1);
@@ -374,3 +421,185 @@ function finishGame() {
   document.body.classList.add("scroll-mode");
   document.getElementById("page2")?.scrollIntoView({ behavior: "smooth" });
 }
+
+/* ================= QUIZ ================= */
+
+function stopResultAudio() {
+  if (!resultAudio) return;
+  resultAudio.pause();
+  resultAudio.currentTime = 0;
+  resultAudio.removeAttribute("src");
+}
+
+function enterQuizAudioMode() {
+  stopResultAudio();
+
+  if (!music) return;
+  _inviteWasPlaying = !music.paused;
+  _inviteTime = music.currentTime || 0;
+  music.pause();
+}
+
+function exitQuizAudioMode() {
+  stopResultAudio();
+
+  if (!music) return;
+  if (_inviteWasPlaying) {
+    try { music.currentTime = _inviteTime || 0; } catch (e) {}
+    music.play().catch(() => {});
+  }
+}
+
+function resetQuizUI() {
+  quizForm?.reset();
+
+  if (quizResult) quizResult.style.display = "none";
+  if (quizResultInner) {
+    quizResultInner.classList.remove("show");
+    quizResultInner.innerHTML = "";
+  }
+  if (resultCover) {
+    resultCover.classList.remove("show");
+    resultCover.removeAttribute("src");
+  }
+  if (resultBlurb) resultBlurb.textContent = "";
+  quizOverlay?.classList.remove("on");
+}
+
+function openQuiz() {
+  _scrollYBeforeQuiz = window.scrollY || 0;
+  enterQuizAudioMode();
+  resetQuizUI();
+
+  document.body.classList.add("quiz-open");
+  quizScreen?.setAttribute("aria-hidden", "false");
+
+  setTimeout(() => {
+    if (quizScreen) quizScreen.scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, 0);
+}
+
+function closeQuiz() {
+  document.body.classList.remove("quiz-open");
+  quizScreen?.setAttribute("aria-hidden", "true");
+  stopResultAudio();
+
+  setTimeout(() => {
+    window.scrollTo({ top: _scrollYBeforeQuiz, behavior: "auto" });
+  }, 0);
+
+  exitQuizAudioMode();
+}
+
+function computeQuizResult() {
+  if (!quizForm) return { error: "Quiz not found." };
+
+  const guestName = (guestNameInput?.value || "").trim();
+  if (!guestName) return { error: "Enter your name first." };
+
+  const data = new FormData(quizForm);
+
+  for (let i = 1; i <= 6; i++) {
+    if (!data.get("q" + i)) return { error: "Answer all 6 questions first." };
+  }
+
+  const scores = Object.fromEntries(SONG_KEYS.map(k => [k, 0]));
+
+  for (const [key, value] of data.entries()) {
+    if (key === "guestName") continue;
+    if (scores[value] !== undefined) scores[value] += 1;
+  }
+
+  const max = Math.max(...Object.values(scores));
+  const top = Object.keys(scores).filter(k => scores[k] === max);
+  const chosen = top[Math.floor(Math.random() * top.length)];
+
+  return { chosen, guestName };
+}
+
+function playResultSong(songKey) {
+  music?.pause();
+
+  if (resultCover) {
+    resultCover.src = `${songKey}.jpg`;
+    resultCover.classList.add("show");
+  }
+
+  if (resultAudio) {
+    resultAudio.pause();
+    resultAudio.currentTime = 0;
+    resultAudio.src = `${songKey}.mp3`;
+    resultAudio.load();
+    resultAudio.play().catch(() => {});
+  }
+}
+
+function revealQuizResult(songKey, guestName) {
+  if (!quizResult || !quizResultInner) return;
+
+  quizResult.style.display = "block";
+
+  quizResultInner.classList.remove("show");
+  quizResultInner.innerHTML = `
+    <h2>${guestName}, you are <span>${SONG_PRETTY[songKey] || "a Mystery Track"}</span></h2>
+  `;
+
+  if (resultBlurb) resultBlurb.textContent = SONG_BLURB[songKey] || "";
+
+  if (quizOverlay) {
+    quizOverlay.classList.add("on");
+    setTimeout(() => quizOverlay.classList.remove("on"), 900);
+  }
+
+  requestAnimationFrame(() => quizResultInner.classList.add("show"));
+
+  playResultSong(songKey);
+
+  // Auto-scroll to show full reveal
+  const scrollToFullResult = () => {
+    quizResult.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    setTimeout(() => {
+      window.scrollBy({ top: 140, left: 0, behavior: "smooth" });
+    }, 350);
+
+    setTimeout(() => {
+      window.scrollBy({ top: 80, left: 0, behavior: "smooth" });
+    }, 900);
+  };
+
+  setTimeout(scrollToFullResult, 180);
+
+  if (resultCover) {
+    resultCover.onload = () => setTimeout(scrollToFullResult, 80);
+  }
+}
+
+// Quiz event listeners
+openQuizBtn?.addEventListener("click", openQuiz);
+quizBackBtn?.addEventListener("click", closeQuiz);
+quizCloseBtn?.addEventListener("click", closeQuiz);
+
+quizRetryBtn?.addEventListener("click", () => {
+  resetQuizUI();
+  stopResultAudio();
+  if (quizScreen) quizScreen.scrollTop = 0;
+});
+
+quizFinishBtn?.addEventListener("click", () => {
+  const res = computeQuizResult();
+
+  if (res.error) {
+    if (!quizResult || !quizResultInner) return;
+    quizResult.style.display = "block";
+    quizResultInner.classList.remove("show");
+    quizResultInner.innerHTML = `<h2>Hold up</h2><p>${res.error}</p>`;
+    if (resultBlurb) resultBlurb.textContent = "";
+    requestAnimationFrame(() => quizResultInner.classList.add("show"));
+    setTimeout(() => quizResult.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+    return;
+  }
+
+  revealQuizResult(res.chosen, res.guestName);
+});
