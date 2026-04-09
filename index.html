@@ -14,105 +14,105 @@
     <div class="overlay volume-overlay">
       <h1 class="big-title">Please turn your volume up</h1>
       <h2>for a full experience 🔊</h2>
-      <button class="primary" id="startBtn">I'm ready</button>
+      <button class="primary" id="startBtn" type="button">I'm ready</button>
     </div>
   </section>
 
   <!-- PAGE 1 -->
-<section id="page1" class="page">
-  <div class="overlay mission-overlay">
-    <h1 class="big-title">You're Invited</h1>
-    <h2>X'O Nights: Nikita Turns 21</h2>
+  <section id="page1" class="page">
+    <div class="overlay mission-overlay">
+      <h1 class="big-title">You're Invited</h1>
+      <h2>X'O Nights: Nikita Turns 21</h2>
 
-    <div class="mission-game">
-      <p class="game-hint" id="gameHint">Choose carefully...</p>
+      <div class="mission-game">
+        <p class="game-hint" id="gameHint">Choose carefully...</p>
 
-      <div class="game-stage" id="gameStage">
-        <!-- STAGE 1: BOMB -->
-        <div class="stage-screen active" id="bombStage">
-          <div class="bomb-timer" id="bombTimer">30</div>
+        <div class="game-stage" id="gameStage">
+          <!-- STAGE 1: BOMB -->
+          <div class="stage-screen active" id="bombStage">
+            <div class="bomb-timer" id="bombTimer">30</div>
 
-          <div class="bomb-rig">
-            <div class="bomb-device" id="bombDevice">
-              <div class="bomb-top-panel"></div>
+            <div class="bomb-rig">
+              <div class="bomb-device" id="bombDevice">
+                <div class="bomb-top-panel"></div>
 
-              <div class="bomb-core-wrap">
-                <div class="bomb-core">
-                  <div class="bomb-center-light"></div>
-                  <div class="bomb-rivet r1"></div>
-                  <div class="bomb-rivet r2"></div>
-                  <div class="bomb-rivet r3"></div>
-                  <div class="bomb-rivet r4"></div>
+                <div class="bomb-core-wrap">
+                  <div class="bomb-core">
+                    <div class="bomb-center-light"></div>
+                    <div class="bomb-rivet r1"></div>
+                    <div class="bomb-rivet r2"></div>
+                    <div class="bomb-rivet r3"></div>
+                    <div class="bomb-rivet r4"></div>
+                  </div>
                 </div>
+
+                <div class="wire-chamber curved-wires">
+                  <div class="wire-line red-wire" data-wire="red">
+                    <span class="wire-anchor left-anchor"></span>
+                    <span class="wire-anchor right-anchor"></span>
+                    <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                      <path class="wire-curve"
+                        d="M18,12 C75,56 128,56 160,30 C192,5 246,5 302,44" />
+                    </svg>
+                  </div>
+
+                  <div class="wire-line green-wire" data-wire="green">
+                    <span class="wire-anchor left-anchor"></span>
+                    <span class="wire-anchor right-anchor"></span>
+                    <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                      <path class="wire-curve"
+                        d="M18,17 C70,0 115,0 160,30 C205,59 250,59 302,18" />
+                    </svg>
+                  </div>
+
+                  <div class="wire-line blue-wire" data-wire="blue">
+                    <span class="wire-anchor left-anchor"></span>
+                    <span class="wire-anchor right-anchor"></span>
+                    <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                      <path class="wire-curve"
+                        d="M18,40 C80,10 130,10 160,30 C190,50 240,50 302,14" />
+                    </svg>
+                  </div>
+
+                  <div class="wire-line yellow-wire" data-wire="yellow">
+                    <span class="wire-anchor left-anchor"></span>
+                    <span class="wire-anchor right-anchor"></span>
+                    <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                      <path class="wire-curve"
+                        d="M18,24 C90,58 126,58 160,30 C194,2 230,2 302,34" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="slice-guide">Swipe up or down on a wire to cut it</div>
               </div>
+            </div>
 
-              <div class="wire-chamber curved-wires">
-                <div class="wire-line red-wire" data-wire="red">
-                  <span class="wire-anchor left-anchor"></span>
-                  <span class="wire-anchor right-anchor"></span>
-                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-                    <path class="wire-curve"
-                      d="M18,12 C75,56 128,56 160,30 C192,5 246,5 302,44" />
-                  </svg>
-                </div>
+            <div class="explosion-flash" id="explosionFlash"></div>
+          </div>
 
-                <div class="wire-line green-wire" data-wire="green">
-                  <span class="wire-anchor left-anchor"></span>
-                  <span class="wire-anchor right-anchor"></span>
-                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-                    <path class="wire-curve"
-                      d="M18,17 C70,0 115,0 160,30 C205,59 250,59 302,18" />
-                  </svg>
-                </div>
-
-                <div class="wire-line blue-wire" data-wire="blue">
-                  <span class="wire-anchor left-anchor"></span>
-                  <span class="wire-anchor right-anchor"></span>
-                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-                    <path class="wire-curve"
-                      d="M18,40 C80,10 130,10 160,30 C190,50 240,50 302,14" />
-                  </svg>
-                </div>
-
-                <div class="wire-line yellow-wire" data-wire="yellow">
-                  <span class="wire-anchor left-anchor"></span>
-                  <span class="wire-anchor right-anchor"></span>
-                  <svg class="wire-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-                    <path class="wire-curve"
-                      d="M18,24 C90,58 126,58 160,30 C194,2 230,2 302,34" />
-                  </svg>
-                </div>
-              </div>
-
-              <div class="slice-guide">Swipe up or down on a wire to cut it</div>
+          <!-- STAGE 2A: GREEN RUNNER -->
+          <div class="stage-screen" id="greenStage">
+            <div class="runner-instructions">Catch the figure</div>
+            <div class="runner-area" id="runnerArea">
+              <div class="green-runner" id="greenRunner"></div>
             </div>
           </div>
 
-          <div class="explosion-flash" id="explosionFlash"></div>
-        </div>
-
-        <!-- STAGE 2A: GREEN RUNNER -->
-        <div class="stage-screen" id="greenStage">
-          <div class="runner-instructions">Catch the figure</div>
-          <div class="runner-area" id="runnerArea">
-            <div class="green-runner" id="greenRunner"></div>
+          <!-- STAGE 2B: BLUE CLOCK -->
+          <div class="stage-screen" id="blueStage">
+            <div class="clock-title">Swipe forward into tomorrow</div>
+            <div class="digital-clock-panel" id="digitalClockPanel">
+              <div class="digital-clock-readout" id="digitalClockReadout">23:45</div>
+              <div class="clock-subtext">Swipe up until it becomes 00:01</div>
+            </div>
           </div>
         </div>
 
-        <!-- STAGE 2B: BLUE CLOCK -->
-        <div class="stage-screen" id="blueStage">
-          <div class="clock-title">Swipe forward into tomorrow</div>
-          <div class="digital-clock-panel" id="digitalClockPanel">
-            <div class="digital-clock-readout" id="digitalClockReadout">23:45</div>
-            <div class="clock-subtext">Swipe up until it becomes 00:01</div>
-          </div>
-        </div>
+        <p class="game-status" id="gameStatus">A ticking choice waits for you...</p>
       </div>
-
-      <p class="game-status" id="gameStatus">A ticking choice waits for you...</p>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- PAGE 2 -->
   <section id="page2" class="page light-page">
@@ -154,9 +154,8 @@
           <li>Casual, Comfort over beauty</li>
         </ul>
 
-        <br>
         <p class="dress-note">
-          <strong> Kindly Note:</strong> The dress code should be represented by your top (t-shirt or dress). Bottoms/pants alone will not meet the requirement. Thank you for understanding.
+          <strong>Kindly Note:</strong> The dress code should be represented by your top (t-shirt or dress). Bottoms/pants alone will not meet the requirement. Thank you for understanding.
         </p>
 
         <br><br>
@@ -169,32 +168,37 @@
   <!-- PAGE 4 -->
   <section id="page4" class="page light-page contact-layout">
     <div class="page4-content">
-      <div class="contact-wrapper">
-        <div class="contact-main">
+      <div class="two-column">
+        <div class="left text-left">
           <h1 class="big-contact">Contact Details</h1>
-          <p class="contact-intro">Contact Nikita for more information. If you don't want to contact me.</p>
-          <p>Contact my mother-Koshnee for more information.</p>
+          <p>Contact Nikita(Me) for more information.</p>
+          <p>If you don't want to contact me, contact my mother-Koshnee for more information.</p>
+        </div>
 
-          <div class="contact-details">
-            <div class="contact-row">
-              <span class="contact-label">Phone Number:</span>
-              <span class="contact-value">0813270172</span>
-            </div>
-            <div class="contact-row">
-              <span class="contact-label">Koshnee's Number:</span>
-              <span class="contact-value">0832269234</span>
-            </div>
-            <div class="contact-row">
-              <span class="contact-label">RSVP:</span>
-              <span class="contact-value">There is none, you have to come 😉</span>
-            </div>
+        <div class="right text-left">
+          <div class="contact-lines">
+            <p class="contact-line">
+              <span class="label">Phone Number</span><span class="colon">:</span>
+              <span class="value">0813270172</span>
+            </p>
+
+            <p class="contact-line">
+              <span class="label">Koshnee's Number</span><span class="colon">:</span>
+              <span class="value">0832269234</span>
+            </p>
+
+            <p class="contact-line">
+              <span class="label">RSVP</span><span class="colon">:</span>
+              <span class="value">There is none, you have to come😉</span>
+            </p>
           </div>
-          
-          <!-- QUIZ BOX -->
-          <div class="quiz-box">
-            <p class="quiz-box-title">Find out what song you are from Hurry Up Tomorrow</p>
-            <p class="quiz-box-sub">Participate if you want.</p>
-            <button class="quiz-open-btn" id="openQuizBtn">Click to play</button>
+
+          <br><br>
+
+          <div class="quiz-teaser">
+            <h2 class="quiz-teaser-title">Find out what song you are from <span class="quiz-album">Hurry Up Tomorrow</span></h2>
+            <p class="quiz-teaser-sub">Participate if you want</p>
+            <button class="quiz-play-btn" id="openQuizBtn" type="button">Click to play</button>
           </div>
         </div>
       </div>
@@ -208,40 +212,45 @@
   <!-- QUIZ SCREEN -->
   <section id="pageQuiz" class="quiz-screen" aria-hidden="true">
     <div class="quiz-inner">
-      <button class="quiz-back-btn" id="quizBackBtn">← Back to Invite</button>
-      
-      <h1 class="quiz-title">Which Hurry Up Tomorrow song are you?</h1>
-      <p class="quiz-subtitle">6 quick picks, soft reveal</p>
-      
-      <form class="quiz-form" id="quizForm">
-        <!-- Name Input -->
+      <button class="quiz-back-btn" id="quizBackBtn" type="button">← Back to invite</button>
+
+      <h1 class="quiz-title">Which <span class="quiz-album">Hurry Up Tomorrow</span> song are you?</h1>
+      <p class="quiz-subtitle">6 quick picks. Soft reveal. Dark vibes.</p>
+
+      <form id="quizForm" class="quiz-form" autocomplete="off">
         <div class="quiz-q">
-          <input type="text" class="quiz-name" id="guestName" placeholder="Enter your name" required>
+          <h3>Your name</h3>
+          <input
+            id="guestName"
+            name="guestName"
+            type="text"
+            class="quiz-name"
+            placeholder="Type your name…"
+            maxlength="30"
+            required
+          />
         </div>
 
-        <!-- Question 1 -->
         <div class="quiz-q">
-          <h3>1. If you had to pick one guilty-pleasure snack at midnight, what is it?</h3>
+          <h3>1) If you had to pick one guilty-pleasure snack at midnight, what is it?</h3>
           <label><input type="radio" name="q1" value="cry-for-me"> Chips/something spicy</label>
-          <label><input type="radio" name="q1" value="niagara-falls"> Ice cream staight from the tub</label>
+          <label><input type="radio" name="q1" value="niagara-falls"> Ice cream straight from the tub</label>
           <label><input type="radio" name="q1" value="the-abyss"> Chocolate/Sweets</label>
-          <label><input type="radio" name="q1" value="timeless"> Pancakes/Waffels</label>
+          <label><input type="radio" name="q1" value="timeless"> Pancakes/Waffles</label>
           <label><input type="radio" name="q1" value="wake-me-up"> None of the above...I'm 'trying' to be healthy</label>
         </div>
 
-        <!-- Question 2 -->
         <div class="quiz-q">
-          <h3>2. Which language would you love to learn just for fun?</h3>
+          <h3>2) Which language would you love to learn just for fun?</h3>
           <label><input type="radio" name="q2" value="wake-me-up"> French</label>
           <label><input type="radio" name="q2" value="timeless"> Spanish</label>
           <label><input type="radio" name="q2" value="the-abyss"> Italian</label>
           <label><input type="radio" name="q2" value="niagara-falls"> Japanese</label>
-          <label><input type="radio" name="q2" value="cry-for-me"> Portugese</label>
+          <label><input type="radio" name="q2" value="cry-for-me"> Portuguese</label>
         </div>
 
-        <!-- Question 3 -->
         <div class="quiz-q">
-          <h3>3. What's your love language?</h3>
+          <h3>3) What's your love language?</h3>
           <label><input type="radio" name="q3" value="timeless"> Quality time, forever</label>
           <label><input type="radio" name="q3" value="the-abyss"> Words of affirmation, raw and real</label>
           <label><input type="radio" name="q3" value="cry-for-me"> Acts of service, even when it hurts</label>
@@ -249,9 +258,8 @@
           <label><input type="radio" name="q3" value="wake-me-up"> Gifts, trying to buy happiness</label>
         </div>
 
-        <!-- Question 4 -->
         <div class="quiz-q">
-          <h3>4. Pick a setting:</h3>
+          <h3>4) Pick a setting:</h3>
           <label><input type="radio" name="q4" value="niagara-falls"> A rainy city skyline</label>
           <label><input type="radio" name="q4" value="wake-me-up"> A sleepless night in neon lights</label>
           <label><input type="radio" name="q4" value="timeless"> A sunset that never ends</label>
@@ -259,9 +267,8 @@
           <label><input type="radio" name="q4" value="cry-for-me"> A car parked by the ocean</label>
         </div>
 
-        <!-- Question 5 -->
         <div class="quiz-q">
-          <h3>5. Pick a genre of music</h3>
+          <h3>5) Pick a genre of music</h3>
           <label><input type="radio" name="q5" value="the-abyss"> R&B</label>
           <label><input type="radio" name="q5" value="timeless"> Rap</label>
           <label><input type="radio" name="q5" value="cry-for-me"> Pop</label>
@@ -269,9 +276,8 @@
           <label><input type="radio" name="q5" value="niagara-falls"> 80's and 90's</label>
         </div>
 
-        <!-- Question 6 -->
         <div class="quiz-q">
-          <h3>6. Pick a Hurry Up Tomorrow lyric:</h3>
+          <h3>6) Pick a Hurry Up Tomorrow lyric:</h3>
           <label><input type="radio" name="q6" value="cry-for-me"> "Cause I tried with you, saw my life with you"</label>
           <label><input type="radio" name="q6" value="niagara-falls"> "I wouldn't let love inside"</label>
           <label><input type="radio" name="q6" value="the-abyss"> "You know my heart belongs to you"</label>
@@ -279,17 +285,16 @@
           <label><input type="radio" name="q6" value="wake-me-up"> "Cause I fear your love's my delusion"</label>
         </div>
 
-        <button type="button" class="quiz-finish-btn" id="quizFinishBtn">Reveal my song</button>
+        <button class="quiz-finish-btn" id="quizFinishBtn" type="button">Reveal my song</button>
       </form>
 
-      <!-- RESULT -->
-      <div class="quiz-result" id="quizResult">
+      <div class="quiz-result" id="quizResult" aria-live="polite">
         <div class="quiz-result-inner fade-soft" id="quizResultInner"></div>
-        <img class="result-cover" id="resultCover" alt="Song Cover">
-        <p class="result-blurb" id="resultBlurb"></p>
+        <img id="resultCover" class="result-cover" alt="Song cover" />
+        <p id="resultBlurb" class="result-blurb"></p>
         <div class="quiz-result-actions">
-          <button class="quiz-retry-btn" id="quizRetryBtn">Try again</button>
-          <button class="quiz-close-btn" id="quizCloseBtn">Back to Invite</button>
+          <button class="quiz-retry-btn" id="quizRetryBtn" type="button">Try again</button>
+          <button class="quiz-close-btn" id="quizCloseBtn" type="button">Back to invite</button>
         </div>
       </div>
 
